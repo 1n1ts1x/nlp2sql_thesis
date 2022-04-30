@@ -1,0 +1,19 @@
+% start S
+S[SEM=(?np + ?v)] -> NP[SEM=?np] V[SEM=?v]
+NP[SEM=(?det + ?n + ?pp)] -> Det[SEM=?det] N[SEM=?n] PP[SEM=?pp]
+Det[SEM='SELECT'] -> 'show' 
+N[SEM='temperature'] -> 'temperature'
+PP[SEM='FROM tomato_table'] -> 'tomato' 
+V[SEM=''] -> 'plant'
+
+
+
+
+
+
+
+
+
+
+
+
