@@ -18,7 +18,6 @@ Window.clearcolor = (.9, .9, .9, .9)
 
 tts = pyttsx3.init()
 tts.setProperty('rate', 150)
-    
 
 class KVBL(BoxLayout):
     input_query = ObjectProperty(None)
@@ -29,27 +28,31 @@ class KVBL(BoxLayout):
         self.sqlquery = ''
 
     @mainthread 
-    def update(self, q, *a):
-        if 'SELECT' in q:
-            try:
-                self.ids.output_query_txtinput.foreground_color = 0, 1, 0, 1
+    def update(self, q, f, *largs):
+        if not f:
+            if 'SELECT' in q:
+                try:
+                    self.ids.output_query_txtinput.foreground_color = 0, 1, 0, 1
+                    self.ids.output_query_txtinput.text = q
+                except:
+                    self.ids.output_query_txtinput.text = q
+            elif q == '-4':
+                q = 'Failed to generate SQL statement date is invalid'
+                self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
+                self.ids.output_query_txtinput.text = 'Failed to generate SQL statement date is invalid'
+            elif q == '-5':
+                q = 'Sorry I am having some trouble understanding your query please try again'
+                self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
+                self.ids.output_query_txtinput.text = 'Sorry I am having some trouble understanding your query please try again'   
+            else:
+                self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
                 self.ids.output_query_txtinput.text = q
-            except:
-                self.ids.output_query_txtinput.text = q
-        elif q == '-4':
-            q = 'Failed to generate SQL statement date is invalid'
-            self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
-            self.ids.output_query_txtinput.text = 'Failed to generate SQL statement date is invalid'
-        elif q == '-5':
-            q = 'Sorry I am having some trouble understanding your query please try again'
-            self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
-            self.ids.output_query_txtinput.text = 'Sorry I am having some trouble understanding your query please try again'   
         else:
-            self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
+            self.ids.output_query_txtinput.foreground_color = 1, 1, 1, 1
             self.ids.output_query_txtinput.text = q
 
-    def back_to_main(self, q):
-        self.update(q)
+    def back_to_main(self, q, f):
+        self.update(q, f)
             
     def thread_run_tts(self, sql_query=''):
         if 'SELECT' in sql_query:
@@ -70,6 +73,7 @@ class KVBL(BoxLayout):
         with sr.Microphone() as self.source: 
 
             tts.say('What is your query?')
+            Clock.schedule_once(partial(self.update, 'What is your query?', 2), 0)
             tts.runAndWait()
             tts.stop()
 
@@ -78,12 +82,15 @@ class KVBL(BoxLayout):
                 query = r.recognize_google(audio)    
 
                 tts.say('You said')
+                Clock.schedule_once(partial(self.update, 'You said', 1), 0)
                 tts.runAndWait()
                 tts.say(query)
+                Clock.schedule_once(partial(self.update, query, 1), 0)
                 tts.runAndWait()
                 self.sqlquery = query
             except:                
                 tts.say('Failed to generate SQL statement voice is unrecognizable')
+                Clock.schedule_once(partial(self.update, 'Failed to generate SQL statement voice is unrecognizable', 0), 0)
                 tts.runAndWait()
                 
 
@@ -286,7 +293,7 @@ class KVBL(BoxLayout):
             pass
         
         try:
-            Clock.schedule_once(partial(self.update, sql_query), 0)
+            Clock.schedule_once(partial(self.update, sql_query, 0), 0)
         finally:
             pass
 
