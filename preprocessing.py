@@ -394,6 +394,12 @@ class CleanText:
         seen_add = seen.add
         list_table = [x for x in list_table if not (x in seen or seen_add(x))]
 
+        if 'all' in list_table:
+            try:    
+                list_table = [x for x in list_table if x == 'all']
+            except:
+                pass
+            
         str_table = ' table '.join(list_table)
 
         list_table = list(str_table.split(' '))

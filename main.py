@@ -4,7 +4,6 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
-from replace_substr import ReplaceSubstring
 from sql_generator import *
 import pyttsx3
 import speech_recognition as sr
