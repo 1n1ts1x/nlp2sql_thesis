@@ -17,6 +17,8 @@ class SQLGenerator:
         self.param_err = 0
         self.query_flag = 0
         self.temp2 = 0
+        self.sql_schema_tbl = [] 
+        self.list_sql_multi = []
 
     def bigram(list_toks): 
         d = zip(*[list_toks[i:] for i in range(0, 2)])
@@ -54,15 +56,19 @@ class SQLGenerator:
 
         return list_toks
 
-    def add_table_names(list_toks):
+    def add_table_names(self, list_toks):
         i = 0
 
         while i < len(list_toks):
             if list_toks[i] == 'plant' or list_toks[i] == 'table':
-                return list_toks[i - 1]
+                self.sql_schema_tbl.append(list_toks[i - 1])
 
             i += 1
-        
+
+        if self.sql_schema_tbl:
+            self.sql_schema_tbl = list(set(self.sql_schema_tbl))
+            return self.sql_schema_tbl
+
         return None
 
     def add_multiple_conditions(self, list_sql_syntax, param, sql_schema, t, param_err):
@@ -376,9 +382,12 @@ class SQLGenerator:
 
         list_tokens = SQLGenerator.bigram(list_tokens)
 
-        sql_schema[1][0] = SQLGenerator.add_table_names(list_tokens)
-
-        sql_schema[1] = [i for i in sql_schema[1] if i]
+        sql_schema[1] = self.add_table_names(list_tokens)
+        
+        try:
+            sql_schema[1] = [i for i in sql_schema[1] if i]
+        except:
+            None
 
         param = i = 0
 
@@ -435,7 +444,7 @@ class SQLGenerator:
 
         #remove zeroes in list
         list_sql_syntax[:] = (v for v in list_sql_syntax if v != 0) 
-        
+
         '''map list items with user-defined schema'''    
         temp2 = 0
         cls2 = Classifier(list_temp_tokens, 1, param, sql_schema, self.t)
@@ -587,14 +596,20 @@ class SQLGenerator:
                     j = 0
                 
                     if not flag2:
+                        join_tbl_list = []
+                        
                         while j < len(sql_schema[1]):
-                            if list_temp_tokens[i] == sql_schema[1][j]:
+                            if sql_schema[1][j] == 'dummy':
                                 flag2 = 1
-                                list_sql_syntax.append(sql_schema[1][j] + '_table')
-
-                                break
+                                join_tbl_list.append('dummy')
+                            else:
+                                flag2 = 1
+                                join_tbl_list.append(sql_schema[1][j] + '_table')
                             
                             j += 1
+
+                        join_sql_tbl_str = ', '.join(join_tbl_list)
+                        list_sql_syntax.insert(3, join_sql_tbl_str)
 
                     if flag and flag2:
                         sql_flag = 0
@@ -661,21 +676,25 @@ class SQLGenerator:
                     j = 0
                 
                     if not flag2:
-                        while j < len(sql_schema[1]):
-                            if list_temp_tokens[i] == sql_schema[1][j]:
-                                flag2 = 1
-                                list_sql_syntax.insert(3, sql_schema[1][j] + '_table')
+                        join_tbl_list = []
 
-                                break
+                        while j < len(sql_schema[1]):
+                            if sql_schema[1][j] == 'dummy':
+                                flag2 = 1
+                                join_tbl_list.append('dummy')
+                            else:
+                                flag2 = 1
+                                join_tbl_list.append(sql_schema[1][j] + '_table')
                             
                             j += 1
+
+                        join_sql_tbl_str = ', '.join(join_tbl_list)
+                        list_sql_syntax.insert(3, join_sql_tbl_str)
 
                     if flag and flag2:
                         break
                         
                     i += 1
-
- 
 
                 if temp2 == 1:
                     sql_flag = 0
@@ -934,8 +953,6 @@ class SQLGenerator:
                         self.err = 'Failed to generate SQL statement date is invalid'
 
                     return self.err
-
-
 
                 sql_tts_query = sql_query.join(list_sql_syntax_multi)
                 self.query = sql_tts_query

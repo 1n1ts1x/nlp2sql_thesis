@@ -15,24 +15,21 @@ class CleanText:
 
     def arrange_tokens(self, ls, cmd_list):
         month_list = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
-        cmd = None
-        month = None
+        params_list = ['temperature', 'degree', 'humidity', 'soil', 'percent', 'air', 'ppm', 'light', 
+        'lux', 'date']
 
-        try: 
-            i = 0
+        i = 0
 
-            while i < len(ls):
-                if ls[i] == 'the' and ls[i + 1] == 'date' and ls[i + 2] == 'is':
-                    ls[i] = ''
-                    ls[i + 1] = ''
-                    ls [i + 2] = ''
-                elif ls[i] == 'date' and ls[i + 1] == 'is':
-                    ls[i] = ''
-                    ls[i + 1] = ''
-                    
-                i += 1
-        except:
-            pass
+        while i < len(ls):
+            if ls[i] == 'the' and ls[i + 1] == 'date' and ls[i + 2] == 'is':
+                ls[i] = ''
+                ls[i + 1] = ''
+                ls [i + 2] = ''
+            elif ls[i] == 'date' and ls[i + 1] == 'is':
+                ls[i] = ''
+                ls[i + 1] = ''
+                
+            i += 1
             
         ls = [x for x in ls if x != '']
 
@@ -70,13 +67,45 @@ class CleanText:
                 break
             
             i += 1
-            
+
+        list_cmd = []
+        list_table = []
+        list_condition = []
+        list_date = []
+        list_date2 = []
+        ffdate = 0
+        ffdate2 = 0
+        ffdate3 = 0
+        b = 0
+
         index = index2 = index3 = index4 = index5 = index6 = index7 = index8 = index9 = index10 = 0
 
         try:
-            if 'today' in ls and month:
-                list_date = []
+            i = len(ls) - 1
             
+            while i >= 0:
+                j = i
+                if ls[i] == 'table':
+                    index3 = i
+                    
+                    while j >= 0:
+                        if ls[j] != 'of':
+                            list_table.append(ls[j])
+                        else:
+                            b = 1
+                            break
+                        
+                        index4 = j - 1
+                        j -= 1
+                
+                if b:
+                    break
+                
+                i -= 1
+                
+            list_table.reverse()
+            
+            if 'today' in ls and month:
                 i = len(ls) - 1
             
                 while i >= 0:
@@ -85,7 +114,7 @@ class CleanText:
                     if ls[i] == 'today':
                         index5 = i
                         while j >= 0:
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month:
+                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
                                 list_date.append(ls[j])
                             else:
                                 break
@@ -95,48 +124,27 @@ class CleanText:
                     i -= 1    
             
                 list_date.reverse()
-            
+                
                 i = 0
-                
-                list_cmd = []
-                list_table = []
-                list_condition = []
-                list_date2 = []
-                ffdate = 0
-                ffdate2 = 0
-                ffdate3 = 0
-                
+
                 while i < len(ls):
                     j = i
-                    
+
                     if ls[i] == cmd:
                         index = i
                         while j < len(ls):
-                            if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != ls[index5] and ls[j] != ls[index6] and ls[j] != 'today' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not' and 'today' in ls:
+                            if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != 'today' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not' and 'today' in ls:
                                 list_cmd.append(ls[j])
-            
                             else:
                                 break
                             
                             index2 = j
                             j += 1
-            
-                    elif ls[i] == 'of' and (ls[i + 2] == 'table' or ls[i + 3] == 'table'):
-                        index3 = i
-                        while j < len(ls):
-                            if ls[j] != ls[index5] and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'is' and ls[j] != 'not' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'equal' and ls[j] != ls[index6] and ls[j] != 'on' and ls[j] != 'and' and ls[j] != 'or' and ls[j] != 'on' and 'today' in ls and ls[j] != 'today' and 'today' in ls:
-                                list_table.append(ls[j])
-            
-                            else:
-                                break
                             
-                            index4 = j
-                            j += 1
-                            
-                    elif ls[i] == 'and' and ls[i + 1] == 'is' and ls[i+2] == 'not' and (ls[i + 3] == 'on' or ls[i + 3] == 'above' or ls[i + 3] == 'below') and (ls[i + 4] == month or ls[i + 5] == month or ls[i + 6] == month):
+                    elif (ls[i] == 'and' or ls[i] == 'or') and ls[i + 1] == 'is' and ls[i+2] == 'not' and (ls[i + 3] == 'on' or ls[i + 3] == 'above' or ls[i + 3] == 'below') and (ls[i + 4] == month or ls[i + 5] == month or ls[i + 6] == month):
                         index9 = i
                         while j < len(ls):
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
+                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
                                 list_date2.append(ls[j])
                                 ffdate3 = 1
                                 ffdate2 = 1
@@ -147,12 +155,12 @@ class CleanText:
                             index10 = j
                             j += 1
                             
-                    elif not ffdate3 and ls[i] == 'and' and (ls[i + 1] == 'not' or ls[i + 1] == 'is') and (ls[i + 2] == 'on' or ls[i + 2] == 'above' or ls[i + 2] == 'below') and (ls[i + 3] == month or ls[i + 4] == month or ls[i + 5] == month):
+                    elif not ffdate3 and (ls[i] == 'and' or ls[i] == 'or') and (ls[i + 1] == 'not' or ls[i + 1] == 'is') and (ls[i + 2] == 'on' or ls[i + 2] == 'above' or ls[i + 2] == 'below') and (ls[i + 3] == month or ls[i + 4] == month or ls[i + 5] == month):
                         index9 = i
                         while j < len(ls):
                             if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
                                 list_date2.append(ls[j])
-                                
+
                                 ffdate2 = 1
                                 ffdate = 1
                             else:
@@ -184,10 +192,8 @@ class CleanText:
                             j += 1
                             
                     i += 1
-            
+
             elif 'today' in ls:
-                list_date = []
-            
                 i = len(ls) - 1
             
                 while i >= 0:
@@ -196,183 +202,120 @@ class CleanText:
                     if ls[i] == 'today':
                         index5 = i
                         while j >= 0:
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month:
+                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
                                 list_date.append(ls[j])
                             else:
                                 break
-                            
                             index6 = j
                             j -= 1
                     i -= 1    
-            
+                    
                 list_date.reverse()
-            
+                
                 i = 0
-                
-                list_cmd = []
-                list_table = []
-                list_condition = []
-                list_date2 = []
-                ffdate = 0
-                ffdate2 = 0
-                ffdate3 = 0
-                
+
+                while i < len(ls):
+                    j = i
+
+                    if ls[i] == cmd:
+                        index = i
+                        while j < len(ls):
+                            if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != 'today' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not' and 'today' in ls:
+                                list_cmd.append(ls[j])
+            
+                            else:
+                                break
+                            index2 = j
+                            j += 1
+                    i += 1
+
+            elif month:
+                i = 0
+
+                while i < len(ls):
+                    j = i
+                    if ls[i] == cmd:
+                        index = i
+                        
+                        while j < len(ls):
+                            if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not':
+                                list_cmd.append(ls[j])
+
+                            else:
+                                break
+                            
+                            index2 = j
+                            j += 1
+
+                    elif (ls[i] == 'and' or ls[i] == 'or') and ls[i + 1] == 'is' and ls[i + 2] == 'not' and (ls[i + 3] == 'on' or ls[i + 3] == 'above' or ls[i + 3] == 'below') and (ls[i + 4] == month or ls[i + 5] == month or ls[i + 6] == month):
+                        index9 = i
+                        while j < len(ls):
+                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
+                                list_date2.append(ls[j])
+                                ffdate3 = 1
+                                ffdate2 = 1
+                                ffdate = 1
+                            else:
+                                break
+                            
+                            index10 = j
+                            j += 1
+                            
+                    elif not ffdate3 and (ls[i] == 'and' or ls[i] == 'or') and (ls[i + 1] == 'not' or ls[i + 1] == 'is') and (ls[i + 2] == 'on' or ls[i + 2] == 'above' or ls[i + 2] == 'below') and (ls[i + 3] == month or ls[i + 4] == month or ls[i + 5] == month):
+                        index9 = i
+                        while j < len(ls):
+                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
+                                list_date2.append(ls[j])
+
+                                ffdate2 = 1
+                                ffdate = 1
+                            else:
+                                break
+                            
+                            index10 = j
+                            j += 1
+                    elif not ffdate2 and (ls[i] == 'not' or ls[i] == 'is') and (ls[i + 1] == 'on' or ls[i + 1] == 'above' or ls[i + 1] == 'below') and (ls[i + 2] == month or ls[i + 3] == month or ls[i + 4] == month):
+                        index9 = i
+                        while j < len(ls):
+                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
+                                list_date2.append(ls[j])
+                                ffdate = 1
+                            else:
+                                break
+                            
+                            index10 = j
+                            j += 1
+                            
+                    elif not ffdate and (ls[i] == 'on' or ls[i] == 'above' or ls[i] == 'below' or  ls[i] == 'and' or ls[i] == 'or') and (ls[i + 1] == month or ls[i + 2] == month or ls[i + 3] == month):
+                        index7 = i
+                        while j < len(ls):
+                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
+                                list_date2.append(ls[j])
+                            else:
+                                break
+                            
+                            index8 = j
+                            j += 1
+                            
+                    i += 1
+            else:
+                i = 0
+
                 while i < len(ls):
                     j = i
                     
                     if ls[i] == cmd:
                         index = i
                         while j < len(ls):
-                            if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != ls[index5] and ls[j] != ls[index6] and ls[j] != 'today' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not' and 'today' in ls:
+                            if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not':
                                 list_cmd.append(ls[j])
-            
                             else:
                                 break
                             
                             index2 = j
                             j += 1
-            
-                    elif ls[i] == 'of' and (ls[i + 2] == 'table' or ls[i + 3] == 'table'):
-                        index3 = i
-                        while j < len(ls):
-                            if ls[j] != ls[index5] and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'is' and ls[j] != 'not' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'equal' and ls[j] != ls[index6] and ls[j] != 'on' and ls[j] != 'and' and ls[j] != 'or' and ls[j] != 'on' and 'today' in ls and ls[j] != 'today' and 'today' in ls:
-                                list_table.append(ls[j])
-            
-                            else:
-                                break
-                            
-                            index4 = j
-                            j += 1
                             
                     i += 1
-            
-            elif month:
-                    i = 0
-                    
-                    list_cmd = []
-                    list_table = []
-                    list_condition = []
-                    list_date2 = []
-                    ffdate = 0
-                    ffdate2 = 0
-                    ffdate3 = 0
-                    
-                    while i < len(ls):
-                        j = i
-                        
-                        if ls[i] == cmd:
-                            index = i
-                            while j < len(ls):
-                                if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not':
-                                    list_cmd.append(ls[j])
-                
-                                else:
-                                    break
-                                
-                                index2 = j
-                                j += 1
-                
-                        elif ls[i] == 'of' and (ls[i + 2] == 'table' or ls[i + 3] == 'table'):
-                            index3 = i
-                            while j < len(ls):
-                                if ls[j] != 'where' and ls[j] != cmd and ls[j] != 'is' and ls[j] != 'not' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'equal' and ls[j] != 'on' and ls[j] != 'and' and ls[j] != 'or' and ls[j] != 'on':
-                                    list_table.append(ls[j])
-                
-                                else:
-                                    break
-                                
-                                index4 = j
-                                j += 1
-                                
-                        elif ls[i] == 'and' and ls[i + 1] == 'is' and ls[i + 2] == 'not' and (ls[i + 3] == 'on' or ls[i + 3] == 'above' or ls[i + 3] == 'below') and (ls[i + 4] == month or ls[i + 5] == month or ls[i + 6] == month):
-                            index9 = i
-                            while j < len(ls):
-                                if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
-                                    list_date2.append(ls[j])
-                                    ffdate3 = 1
-                                    ffdate2 = 1
-                                    ffdate = 1
-                                else:
-                                    break
-                                
-                                index10 = j
-                                j += 1
-                                
-                        elif not ffdate3 and ls[i] == 'and' and (ls[i + 1] == 'not' or ls[i + 1] == 'is') and (ls[i + 2] == 'on' or ls[i + 2] == 'above' or ls[i + 2] == 'below') and (ls[i + 3] == month or ls[i + 4] == month or ls[i + 5] == month):
-                            index9 = i
-                            while j < len(ls):
-                                if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
-                                    list_date2.append(ls[j])
-                                    
-                                    ffdate2 = 1
-                                    ffdate = 1
-                                else:
-                                    break
-                                
-                                index10 = j
-                                j += 1
-                        elif not ffdate2 and (ls[i] == 'not' or ls[i] == 'is') and (ls[i + 1] == 'on' or ls[i + 1] == 'above' or ls[i + 1] == 'below') and (ls[i + 2] == month or ls[i + 3] == month or ls[i + 4] == month):
-                            index9 = i
-                            while j < len(ls):
-                                if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
-                                    list_date2.append(ls[j])
-                                    ffdate = 1
-                                else:
-                                    break
-                                
-                                index10 = j
-                                j += 1
-                                
-                        elif not ffdate and (ls[i] == 'on' or ls[i] == 'above' or ls[i] == 'below' or  ls[i] == 'and' or ls[i] == 'or') and (ls[i + 1] == month or ls[i + 2] == month or ls[i + 3] == month):
-                            index7 = i
-                            while j < len(ls):
-                                if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
-                                    list_date2.append(ls[j])
-                                else:
-                                    break
-                                
-                                index8 = j
-                                j += 1
-                                
-                        i += 1
-            else:
-                    i = 0
-                    
-                    list_cmd = []
-                    list_table = []
-                    list_condition = []
-                    list_date2 = []
-                    ffdate = 0
-                    ffdate2 = 0
-                    ffdate3 = 0
-                    
-                    while i < len(ls):
-                        j = i
-                        
-                        if ls[i] == cmd:
-                            index = i
-                            while j < len(ls):
-                                if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not':
-                                    list_cmd.append(ls[j])
-                                else:
-                                    break
-                                
-                                index2 = j
-                                j += 1
-
-                        elif ls[i] == 'of' and (ls[i + 2] == 'table' or ls[i + 3] == 'table'):
-                            index3 = i
-                            while j < len(ls):
-                                if ls[j] != 'where' and ls[j] != cmd and ls[j] != 'is' and ls[j] != 'not' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'equal' and ls[j] != 'on' and ls[j] != 'and' and ls[j] != 'or' and ls[j] != 'on':
-                                    list_table.append(ls[j])
-                
-                                else:
-                                    break
-                                
-                                index4 = j
-                                j += 1
-                                
-                        i += 1
         except:
             None
 
@@ -382,10 +325,89 @@ class CleanText:
         r4 = []
         r5 = []
 
+        i = len(list_cmd) - 1
+
+        while i >= 0:
+            if (list_cmd[i] != 'temperature' and list_cmd[i] != 'humidity' and list_cmd[i] != 'soil' and list_cmd[i] != 'light' and list_cmd[i] != 'air' and list_cmd[i] != 'date' and list_cmd[i] != 'all'):
+                list_cmd[i] = ''
+            else:
+                break
+            
+            i -= 1
+            
+        list_cmd = [x for x in list_cmd if x != '']
+
+        seen = set()
+        seen_add = seen.add
+        list_cmd = [x for x in list_cmd if not (x in seen or seen_add(x))]
+
+        i = len(list_table) - 1
+
+        while i >= 0:
+            if list_table[i] != 'table' and list_table[i] != 'plant':
+                list_table[i] = ''
+            else:
+                break
+            
+            i -= 1
+        try:    
+            list_table = [x for x in list_table if x != '']
+        except:
+            pass
+
+        try:    
+            list_table = [x for x in list_table if x != 'and']
+        except:
+            pass
+
+        try:    
+            list_table = [x for x in list_table if x != 'or']
+        except:
+            pass
+
+        try:    
+            list_table = [x for x in list_table if x != 'the']
+        except:
+            pass
+
+        try:    
+            list_table = [x for x in list_table if x != 'of']
+        except:
+            pass
+
+        try:    
+            list_table = [x for x in list_table if x != 'table']
+        except:
+            pass
+
+
+        seen = set()
+        seen_add = seen.add
+        list_table = [x for x in list_table if not (x in seen or seen_add(x))]
+
+        str_table = ' table '.join(list_table)
+
+        list_table = list(str_table.split(' '))
+        list_table.insert(0, 'of')
+        list_table.insert(1, 'the')
+        list_table.append('table')
+
+        i = len(list_date2) - 1
+
+        while i >= 0:
+            if not list_date2[i].isnumeric() and list_date2[i] != month:
+                list_date2[i] = ''
+            else:
+                break
+            
+            i -= 1
+            
+        list_date2 = [x for x in list_date2 if x != '']
+
         try:
             for x in range(index, index2 + 1):
                 r.append(x)
-            for x in range(index3, index4 + 1):
+            for x in range(index4, index3 + 1):
                 r2.append(x)
             for x in range(index6, index5 + 1):
                 r3.append(x)
@@ -394,7 +416,6 @@ class CleanText:
             for x in range(index9, index10 + 1):
                 r5.append(x)
             
-
             ran = []
             ran.extend(r)
             ran.extend(r2)
@@ -403,11 +424,9 @@ class CleanText:
             ran.extend(r5)
             ran = list(set(ran))
             ran.sort()
-            
         except:
             None
-
-
+            
         if 0 not in ran:
             ran.insert(0, -1)
             miss = [x for x in range(ran[0], ran[-1] + 1) if x not in ran]
@@ -423,9 +442,41 @@ class CleanText:
         for x in miss:
             list_condition.append(ls[x])
 
-        if list_condition:
+        check = any(i in list_condition for i in params_list)
+
+        if check:
             if 'where' not in list_condition:
                 list_condition.insert(0, 'where')
+        else:
+            list_condition = []
+
+        i = len(list_condition) - 1
+
+        while i >= 0:
+            if (list_condition[i] != 'temperature' and list_condition[i] != 'humidity' and list_condition[i] != 'soil' and list_condition[i] != 'light' and list_condition[i] != 'air' and list_condition[i] != 'date' and list_condition[i] != 'degree' and list_condition[i] != 'percent' and list_condition[i] != 'ppm' and list_condition[i] != 'lux' and not list_condition[i].isnumeric()):
+                list_condition[i] = ''
+            else:
+                break
+            
+            i -= 1
+
+        try:    
+            list_condition = [x for x in list_condition if x != '']
+            
+            if list_condition[0] == 'and' or list_condition[0] == 'or':
+                del list_condition[0]
+        except:
+            None
+
+        try:
+            list_cmd = [x for x in list_cmd if x != 'and']
+        except:
+            None
+            
+        try:
+            list_cmd = [x for x in list_cmd if x != 'or']
+        except:
+            None
 
         tokens = []
 
@@ -440,7 +491,8 @@ class CleanText:
                 list_date.insert(1, 'is')
                 
             tokens.extend(list_date)
-
+            
+            
         if list_date2:
             if 'not' in list_date2 and 'and' not in list_date2 and 'or' not in list_date2 and list_date2:
                 list_date2.insert(list_date2.index('not'), 'and')
@@ -460,14 +512,30 @@ class CleanText:
             if 'date' not in list_date2 and 'is' not in list_date2 and 'or' in list_date2 and list_date2:
                 list_date2.insert(list_date2.index('or') + 1, 'date')
                 list_date2.insert(list_date2.index('date') + 1, 'is')
-
-
+            
             if ('above' in list_date2 or 'below' in list_date2) and 'and' not in list_date2:
                 list_date2.insert(0, 'and')
+            
+            seen = set()
+            seen_add = seen.add
+            list_date2 = [x for x in list_date2 if not (x in seen or seen_add(x))]
 
+            if 'or' in list_date2:
+                list_date2 = [x for x in list_date2 if x != 'and']
+        
             tokens.extend(list_date2)
+            
 
-        return tokens
+        if tokens[tokens.index('table') - 1] == '':
+            tokens[tokens.index('table') - 1] = 'dummy'
+
+        if not list_condition and not list_date and not list_date2 and not list_table:
+            tokens = list_cmd.copy()
+            
+        if tokens:
+            return tokens
+        
+        return ls
 
     def check_parameters(self, tokens):
         try: 
@@ -491,20 +559,21 @@ class CleanText:
     '''transform input query to cleaner text'''
     def clean_text(self):
         cmd_list = ['show', 'display', 'list', 'get', 'what']
+
         #convert query to lowercase
         lowercase_query = self.q.lower()
 
-        flag = 0
-
-        if 'table' in lowercase_query or 'plant' in lowercase_query:
-            flag = 1
-        
         #remove punctuation marks and tokenize
         tokenizer = nltk.RegexpTokenizer(r'\w+')
         tokens = tokenizer.tokenize(lowercase_query)
 
         tokens = self.arrange_tokens(tokens, cmd_list)
- 
+
+        flag = 0
+
+        if 'table' in tokens or 'plant' in tokens:
+            flag = 1
+
         temp = ''
 
         if flag: 
@@ -671,6 +740,7 @@ class CleanText:
         custom_stopwords.remove('is')
         custom_stopwords.append('quality')
         custom_stopwords.append('level')
+        custom_stopwords.append('intensity')
         custom_stopwords.append('moisture')
         custom_stopwords.append('equivalent')
         custom_stopwords.append('exactly')
@@ -679,7 +749,7 @@ class CleanText:
         #lemmatize
         wordnet_lemmatizer = WordNetLemmatizer()
         lemmatized_tokens = [wordnet_lemmatizer.lemmatize(word) for word in stopword_tokens]
-
+        
         if lemmatized_tokens:
             if lemmatized_tokens[0] == temp:
                 lemmatized_tokens[0] = ''
@@ -695,6 +765,7 @@ class CleanText:
         custom_stopwords.remove('is')
         custom_stopwords.append('quality')
         custom_stopwords.append('level')
+        custom_stopwords.append('intensity')
         custom_stopwords.append('moisture')
         custom_stopwords.append('equivalent')
         custom_stopwords.append('exactly')
