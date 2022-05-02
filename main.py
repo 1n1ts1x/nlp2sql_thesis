@@ -251,7 +251,6 @@ class KVBL(BoxLayout):
 
         threading.Thread(target=self.thread_run_tts, args=(sql_query_word,), daemon=True).start()
 
-    @mainthread
     def on_enter2(self):
         self.ids.input_query.text = ''
         self.ids.output_query_txtinput.text = ''
@@ -261,6 +260,7 @@ class KVBL(BoxLayout):
         t.start()
         t.join()
 
+        input_query_txt = self.t2d.convert(self.sqlquery)
         input_query_txt = input_query_txt.replace('greater than or equal', ' above equal')
         input_query_txt = input_query_txt.replace('larger than or equal', ' above equal')
         input_query_txt = input_query_txt.replace('bigger than or equal', ' above equal')
