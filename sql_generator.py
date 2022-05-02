@@ -519,24 +519,44 @@ class SQLGenerator:
                     'not': 'light !='
                 }
 
-
         if not sql_flag:
             i = 0
             
             if 'SELECT' == ' '.join(list_sql_syntax):
-                while i < len(list_temp_tokens):
+                join_tbl_list = []
+                
+                while i < len(list_temp_tokens):        
                     j = 0
-
+                        
                     while j < len(sql_schema[0]):
-                        if list_temp_tokens[i] == 'all' or list_temp_tokens[i] == 'reading':
+                        if list_temp_tokens[i] == 'all':
                             sql_flag = 0
                             list_sql_syntax.append('*')
 
-                            break         
+                        elif list_temp_tokens[i] == sql_schema[0][j]:
+                            sql_flag = 0
+                            join_tbl_list.append(sql_schema[0][j])
                         
                         j += 1
-                        
                     i += 1
+
+                if len(join_tbl_list):
+                    try:
+                        list_sql_syntax = [x for x in list_sql_syntax if x != '']
+                    except:
+                        None
+                    try:
+                        list_sql_syntax = [x for x in list_sql_syntax if x != '*']
+                    except:
+                        None
+                
+                if list_sql_syntax.count('*') > 1:
+                    seen = set()
+                    seen_add = seen.add
+                    list_sql_syntax = [x for x in list_sql_syntax if not (x in seen or seen_add(x))]
+
+                join_sql_tbl_str = ', '.join(join_tbl_list)
+                list_sql_syntax.insert(1, join_sql_tbl_str)
             elif 'SELECT FROM' == ' '.join(list_sql_syntax):
                 flag = flag2 = 0
                 

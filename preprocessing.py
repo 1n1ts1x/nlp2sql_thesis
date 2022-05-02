@@ -17,19 +17,23 @@ class CleanText:
         month_list = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
         params_list = ['temperature', 'degree', 'humidity', 'soil', 'percent', 'air', 'ppm', 'light', 
         'lux', 'date']
+        
 
-        i = 0
+        try:
+            i = 0
 
-        while i < len(ls):
-            if ls[i] == 'the' and ls[i + 1] == 'date' and ls[i + 2] == 'is':
-                ls[i] = ''
-                ls[i + 1] = ''
-                ls [i + 2] = ''
-            elif ls[i] == 'date' and ls[i + 1] == 'is':
-                ls[i] = ''
-                ls[i + 1] = ''
-                
-            i += 1
+            while i < len(ls):
+                if ls[i] == 'the' and ls[i + 1] == 'date' and ls[i + 2] == 'is':
+                    ls[i] = ''
+                    ls[i + 1] = ''
+                    ls [i + 2] = ''
+                elif ls[i] == 'date' and ls[i + 1] == 'is':
+                    ls[i] = ''
+                    ls[i + 1] = ''
+                    
+                i += 1
+        except:
+            None
             
         ls = [x for x in ls if x != '']
 
@@ -114,7 +118,7 @@ class CleanText:
                     if ls[i] == 'today':
                         index5 = i
                         while j >= 0:
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
+                            if ls[j] != 'table' and ls[j] != 'date' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
                                 list_date.append(ls[j])
                             else:
                                 break
@@ -202,7 +206,7 @@ class CleanText:
                     if ls[i] == 'today':
                         index5 = i
                         while j >= 0:
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
+                            if ls[j] != 'table' and ls[j] != 'date' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
                                 list_date.append(ls[j])
                             else:
                                 break
@@ -340,6 +344,11 @@ class CleanText:
         seen = set()
         seen_add = seen.add
         list_cmd = [x for x in list_cmd if not (x in seen or seen_add(x))]
+
+        check_tbl = 0
+
+        if not len(list_table):
+            check_tbl = 1
 
         i = len(list_table) - 1
 
@@ -492,7 +501,6 @@ class CleanText:
                 
             tokens.extend(list_date)
             
-            
         if list_date2:
             if 'not' in list_date2 and 'and' not in list_date2 and 'or' not in list_date2 and list_date2:
                 list_date2.insert(list_date2.index('not'), 'and')
@@ -525,13 +533,33 @@ class CleanText:
         
             tokens.extend(list_date2)
             
-
-        if tokens[tokens.index('table') - 1] == '':
+        
+        if tokens[tokens.index('table') - 1] == '' or tokens[tokens.index('table') - 1] == 'all':
             tokens[tokens.index('table') - 1] = 'dummy'
 
-        if not list_condition and not list_date and not list_date2 and not list_table:
+        if not list_condition and not list_date and not list_date2 and check_tbl:
+
+            i = len(list_cmd) - 1
+
+            while i >= 0:
+                if (list_cmd[i] != 'temperature' and list_cmd[i] != 'humidity' and list_cmd[i] != 'soil' and list_cmd[i] != 'light' and list_cmd[i] != 'air' and list_cmd[i] != 'date' and list_cmd[i] != 'all'):
+                    list_cmd[i] = ''
+                else:
+                    break
+                
+                i -= 1
+
+            if 'all' in list_cmd:
+                check2 = any(i in list_cmd for i in params_list)
+
+                if check2:
+                    try:
+                        list_cmd = [x for x in list_cmd if x != 'all']
+                    except:
+                        None
+
             tokens = list_cmd.copy()
-            
+
         if tokens:
             return tokens
         
@@ -567,7 +595,13 @@ class CleanText:
         tokenizer = nltk.RegexpTokenizer(r'\w+')
         tokens = tokenizer.tokenize(lowercase_query)
 
+        print('BEFORE: tokens = self.arrange_tokens(tokens, cmd_list)')    
+        print(tokens)
+
         tokens = self.arrange_tokens(tokens, cmd_list)
+
+        print('AFTER: tokens = self.arrange_tokens(tokens, cmd_list)')    
+        print(tokens)
 
         flag = 0
 
