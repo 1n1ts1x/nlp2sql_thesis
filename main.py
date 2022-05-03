@@ -1,4 +1,3 @@
-from functools import partial
 import kivy
 from kivy.app import App
 from kivy.core.window import Window
@@ -24,7 +23,6 @@ tts.setProperty('rate', 150)
 
 class KVBL(BoxLayout):    
     input_query = ObjectProperty(None)
-
 
     def __init__(self, **kwargs):
         super(KVBL, self).__init__(**kwargs)
@@ -77,8 +75,8 @@ class KVBL(BoxLayout):
         r = sr.Recognizer()
         with sr.Microphone() as self.source: 
 
+            Clock.schedule_once(partial(self.update, 'What is your query?', 1), 0)
             tts.say('What is your query?')
-            Clock.schedule_once(partial(self.update, 'What is your query?', 2), 0)
             tts.runAndWait()
             tts.stop()
 
@@ -86,11 +84,11 @@ class KVBL(BoxLayout):
                 audio = r.listen(self.source)
                 query = r.recognize_google(audio)    
 
-                tts.say('You said')
                 Clock.schedule_once(partial(self.update, 'You said', 1), 0)
+                tts.say('You said')
                 tts.runAndWait()
-                tts.say(query)
                 Clock.schedule_once(partial(self.update, query, 1), 0)
+                tts.say(query)
                 tts.runAndWait()
                 self.sqlquery = query
             except:                
@@ -132,6 +130,16 @@ class KVBL(BoxLayout):
                 
                 i += 1
 
+        sql_query_list = list(sql_query.split(' '))
+
+        try:
+            if 'AND' in sql_query_list and 'WHERE' not in sql_query_list:
+                sql_query_list[sql_query_list.index('AND')] = 'WHERE'
+
+                sql_query = ' '.join(sql_query_list)
+        except:
+            None
+
         sql_query_word = sql_query
 
         dict_chars_replace = {' comma': ',', 'greater than or equal': '>=', 'greater than': '>', 'less than or equal': '<=',
@@ -143,15 +151,6 @@ class KVBL(BoxLayout):
         except:
             pass
         
-        sql_query_list = list(sql_query.split(' '))
-
-        try:
-            if 'AND' in sql_query_list and 'WHERE' not in sql_query_list:
-                sql_query_list[sql_query_list.index('AND')] = 'WHERE'
-
-                sql_query = ' '.join(sql_query_list)
-        except:
-            None
 
         if 'SELECT' in sql_query:
             try:
@@ -220,6 +219,16 @@ class KVBL(BoxLayout):
                 
                 i += 1
 
+        sql_query_list = list(sql_query.split(' '))
+
+        try:
+            if 'AND' in sql_query_list and 'WHERE' not in sql_query_list:
+                sql_query_list[sql_query_list.index('AND')] = 'WHERE'
+
+                sql_query = ' '.join(sql_query_list)
+        except:
+            None
+
         sql_query_word = sql_query
 
         dict_chars_replace = {' comma': ',', 'greater than or equal': '>=', 'greater than': '>', 'less than or equal': '<=',
@@ -230,16 +239,6 @@ class KVBL(BoxLayout):
                 sql_query = sql_query.replace(key, value)
         except:
             pass
-
-        sql_query_list = list(sql_query.split(' '))
-
-        try:
-            if 'AND' in sql_query_list and 'WHERE' not in sql_query_list:
-                sql_query_list[sql_query_list.index('AND')] = 'WHERE'
-
-                sql_query = ' '.join(sql_query_list)
-        except:
-            None
 
         try:
             Clock.schedule_once(partial(self.update, sql_query, 0), 0)

@@ -657,27 +657,29 @@ class CleanText:
         temp = ''
 
         if flag: 
+            try:
+                i = 0
 
-            i = 0
+                while i < len(tokens):
+                    if tokens[i] == 'plant' or tokens[i] == 'table':
+                        temp = tokens[i - 1]
+                        break
 
-            while i < len(tokens):
-                if tokens[i] == 'plant' or tokens[i] == 'table':
-                    temp = tokens[i - 1]
-                    break
+                    i += 1
 
-                i += 1
+                i = 0
 
-            i = 0
+                while i < len(tokens):
+                    if 'of' == tokens[i]  and (tokens[i + 2] == 'table' or tokens[i + 3] == 'table'):
+                        tokens.insert(i, temp)
+                        tokens.insert(i + 1, 'plant')
+                        tokens.insert(i + 2, 'stop')
 
-            while i < len(tokens):
-                if 'of' == tokens[i]  and (tokens[i + 2] == 'table' or tokens[i + 3] == 'table'):
-                    tokens.insert(i, temp)
-                    tokens.insert(i + 1, 'plant')
-                    tokens.insert(i + 2, 'stop')
+                        break
 
-                    break
-
-                i += 1
+                    i += 1
+            except:
+                pass
 
         i = 0
 
@@ -790,11 +792,14 @@ class CleanText:
         wordnet_lemmatizer = WordNetLemmatizer()
         lemmatized_tokens = [wordnet_lemmatizer.lemmatize(word) for word in stopword_tokens]
         
-        if lemmatized_tokens:
-            if lemmatized_tokens[0] == temp:
-                lemmatized_tokens[0] = ''
-                lemmatized_tokens[1] = ''
-                
+        try:
+            if lemmatized_tokens:
+                if lemmatized_tokens[0] == temp:
+                    lemmatized_tokens[0] = ''
+                    lemmatized_tokens[1] = ''
+        except:
+            None
+            
         #remove stop words
         custom_stopwords = stopwords.words('english')
         custom_stopwords.remove('above')
