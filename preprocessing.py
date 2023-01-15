@@ -1,4 +1,6 @@
+from certifi import where
 import nltk
+import re
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -18,7 +20,6 @@ class CleanText:
         params_list = ['temperature', 'degree', 'humidity', 'soil', 'percent', 'air', 'ppm', 'light', 
         'lux', 'date']
         
-
         try:
             i = 0
 
@@ -594,6 +595,8 @@ class CleanText:
     def clean_text(self):
         cmd_list = ['show', 'display', 'list', 'get', 'what']
 
+        print(self.pff)
+        print('go')
         #convert query to lowercase
         lowercase_query = self.q.lower()
 
@@ -608,6 +611,358 @@ class CleanText:
 
         print('AFTER: tokens = self.arrange_tokens(tokens, cmd_list)')    
         print(tokens)
+        
+        try:
+            start_before_where_tokens = tokens[:tokens.index('where')]
+            print('start_before_where_tokens')
+            print(start_before_where_tokens)
+            where_to_end_tokens = tokens[tokens.index('where'):]
+            print('where_to_end_tokens')
+            print(where_to_end_tokens)
+
+            # params = ['temperature', 'humidity', 'air', 'soil', 'light', 'degree', 'percent', 'ppm', 'lux']
+
+            # pcheck = i = 0
+
+            # while i < len(where_to_end_tokens):
+            #     j = 0
+                
+            #     while j < len(params):
+            #         if where_to_end_tokens[i] == params[j]:
+            #             pcheck = params[j]
+            #             break
+                    
+            #         j += 1
+                
+            #     if (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 1] == 'not' and where_to_end_tokens[i + 2] == 'between' and (where_to_end_tokens[i + 4] == 'and' or where_to_end_tokens[i + 4] == 'or'):
+            #         if int(where_to_end_tokens[i + 3]) > int(where_to_end_tokens[i + 5]):
+            #             temp = where_to_end_tokens[i + 3]
+            #             where_to_end_tokens[i + 3] = where_to_end_tokens[i + 5]
+            #             where_to_end_tokens[i + 5] = temp
+                        
+            #             pcheck = pcheck + ' is not below equal'
+            #             where_to_end_tokens[i + 2] = 'above equal'
+            #             where_to_end_tokens.insert(i + 5, pcheck)
+                        
+            #             i += 1
+            #         else:
+            #             pcheck = pcheck + ' is not below equal'
+            #             where_to_end_tokens[i + 2] = 'above equal'
+            #             where_to_end_tokens.insert(i + 5, pcheck)
+
+            #             i += 1
+            #     elif (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 1] == 'between' and (where_to_end_tokens[i + 3] == 'and' or where_to_end_tokens[i + 3] == 'or'):
+            #         if int(where_to_end_tokens[i + 2]) > int(where_to_end_tokens[i + 4]):
+            #             temp = where_to_end_tokens[i + 2]
+            #             where_to_end_tokens[i + 2] = where_to_end_tokens[i + 4]
+            #             where_to_end_tokens[i + 4] = temp
+                        
+            #             pcheck = pcheck + ' is below equal'
+            #             where_to_end_tokens[i + 1] = 'above equal'
+            #             where_to_end_tokens.insert(i + 4, pcheck)
+                        
+            #             i += 1
+            #         else:
+            #             pcheck = pcheck + ' is below equal'
+            #             where_to_end_tokens[i + 1] = 'above equal'
+            #             where_to_end_tokens.insert(i + 4, pcheck)
+
+            #             i += 1
+                        
+            #     i += 1
+
+            # pcheck = i = 0
+
+            # while i < len(where_to_end_tokens):
+            #     j = 0
+                
+            #     while j < len(params):
+            #         if where_to_end_tokens[i] == params[j]:
+            #             pcheck = params[j]
+            #             break
+                    
+            #         j += 1
+                
+            #     if where_to_end_tokens[i] == 'not' and where_to_end_tokens[i + 1] == 'between' and (where_to_end_tokens[i + 3] == 'and' or where_to_end_tokens[i + 3] == 'or'):
+            #         if int(where_to_end_tokens[i + 2]) > int(where_to_end_tokens[i + 4]):
+            #             temp = where_to_end_tokens[i + 2]
+            #             where_to_end_tokens[i + 2] = where_to_end_tokens[i + 4]
+            #             where_to_end_tokens[i + 4] = temp
+                        
+            #             pcheck = pcheck + ' is not below equal'
+            #             where_to_end_tokens[i + 1] = 'above equal'
+            #             where_to_end_tokens.insert(i + 4, pcheck)
+                        
+            #             i += 1
+            #         else:
+            #             pcheck = pcheck + ' is not below equal'
+            #             where_to_end_tokens[i + 1] = 'above equal'
+            #             where_to_end_tokens.insert(i + 4, pcheck)
+                        
+            #             i += 1
+            #     elif where_to_end_tokens[i] == 'is' and where_to_end_tokens[i + 1] == 'between' and (where_to_end_tokens[i + 3] == 'and' or where_to_end_tokens[i + 3] == 'or'):
+            #         if int(where_to_end_tokens[i + 2]) > int(where_to_end_tokens[i + 4]):
+            #             temp = where_to_end_tokens[i + 2]
+            #             where_to_end_tokens[i + 2] = where_to_end_tokens[i + 4]
+            #             where_to_end_tokens[i + 4] = temp
+                        
+            #             pcheck = pcheck + ' is below equal'
+            #             where_to_end_tokens[i + 1] = 'above equal'
+            #             where_to_end_tokens.insert(i + 4, pcheck)
+                        
+            #             i += 1
+            #         else:
+            #             pcheck = pcheck + ' is below equal'
+            #             where_to_end_tokens[i + 1] = 'above equal'
+            #             where_to_end_tokens.insert(i + 4, pcheck)
+                        
+            #             i += 1
+                        
+            #     i += 1
+
+            # where_to_end_tokens = list(' '.join(where_to_end_tokens).split(' '))
+
+            # params = ['temperature', 'humidity', 'air', 'soil', 'light']
+            # params2 = ['degree', 'percent', 'ppm', 'lux']
+                
+            # pcheck = dont_pcheck = 0
+
+            # i = len(where_to_end_tokens) - 3
+
+            # while i >= 0:
+            #     if (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 2] == 'of' and where_to_end_tokens[i + 3] == 'the' and (where_to_end_tokens[i + 4] == 'temperature' or where_to_end_tokens[i + 4] == 'humidity' or where_to_end_tokens[i + 4] == 'soil' or where_to_end_tokens[i + 4] == 'light' or where_to_end_tokens[i + 4] == 'air'):
+            #         where_to_end_tokens.insert(i + 1, where_to_end_tokens[i + 4])
+            #         i += 1
+            #     elif (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 2] == 'of' and (where_to_end_tokens[i + 3] == 'temperature' or where_to_end_tokens[i + 3] == 'humidity' or where_to_end_tokens[i + 3] == 'soil' or where_to_end_tokens[i + 3] == 'light' or where_to_end_tokens[i + 3] == 'air'):
+            #         where_to_end_tokens.insert(i + 1, where_to_end_tokens[i + 3])
+            #         i += 1
+                                        
+            #     i -= 1
+
+            # i = len(where_to_end_tokens) - 1
+
+            # while i >= 0:
+            #     if where_to_end_tokens[i] != 'and' and where_to_end_tokens[i] != 'or':
+            #         j = 0
+                    
+                    
+            #         while j < len(params2):
+            #             if where_to_end_tokens[i] == params2[j]:
+            #                 dont_pcheck = 1
+            #                 break
+                        
+            #             j += 1
+                        
+            #         j = 0
+                    
+            #         while j < len(params):
+            #             if where_to_end_tokens[i] == params[j]:
+            #                 pcheck = 1
+            #                 break
+                        
+            #             j += 1
+            #     else:
+            #         if dont_pcheck:
+            #             where_to_end_tokens.insert(i + 1, 'is')
+            #         elif not pcheck:
+            #             pindex = i - 1
+            #             flag = 0
+
+            #             while pindex >= 0:
+            #                 pz = 0
+                            
+            #                 while pz < len(params):
+            #                     if where_to_end_tokens[pindex] == params[pz]:
+            #                         flag = 1
+            #                         where_to_end_tokens.insert(i + 1, params[pz])
+            #                         break
+                                
+            #                     pz += 1
+                            
+            #                 if flag:
+            #                     break
+
+            #                 pindex -= 1
+                    
+            #         pcheck = dont_pcheck = 0
+                                        
+            #     i -= 1
+
+            params = ['temperature', 'humidity', 'air', 'soil', 'light', 'degree', 'percent', 'ppm', 'lux']
+
+            pcheck = i = 0
+
+            while i < len(where_to_end_tokens):
+                j = 0
+                
+                while j < len(params):
+                    if where_to_end_tokens[i] == params[j]:
+                        pcheck = params[j]
+                        break
+                    
+                    j += 1
+                
+                if (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 1] == 'not' and where_to_end_tokens[i + 2] == 'between' and (where_to_end_tokens[i + 4] == 'and' or where_to_end_tokens[i + 4] == 'or'):
+                    if int(where_to_end_tokens[i + 3]) > int(where_to_end_tokens[i + 5]):
+                        temp = where_to_end_tokens[i + 3]
+                        where_to_end_tokens[i + 3] = where_to_end_tokens[i + 5]
+                        where_to_end_tokens[i + 5] = temp
+                        
+                        pcheck = pcheck + ' is not below equal'
+                        where_to_end_tokens[i + 2] = 'above equal'
+                        where_to_end_tokens.insert(i + 5, pcheck)
+                        
+                        i += 1
+                    else:
+                        pcheck = pcheck + ' is not below equal'
+                        where_to_end_tokens[i + 2] = 'above equal'
+                        where_to_end_tokens.insert(i + 5, pcheck)
+
+                        i += 1
+                elif (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 1] == 'between' and (where_to_end_tokens[i + 3] == 'and' or where_to_end_tokens[i + 3] == 'or'):
+                    if int(where_to_end_tokens[i + 2]) > int(where_to_end_tokens[i + 4]):
+                        temp = where_to_end_tokens[i + 2]
+                        where_to_end_tokens[i + 2] = where_to_end_tokens[i + 4]
+                        where_to_end_tokens[i + 4] = temp
+                        
+                        pcheck = pcheck + ' is below equal'
+                        where_to_end_tokens[i + 1] = 'above equal'
+                        where_to_end_tokens.insert(i + 4, pcheck)
+                        
+                        i += 1
+                    else:
+                        pcheck = pcheck + ' is below equal'
+                        where_to_end_tokens[i + 1] = 'above equal'
+                        where_to_end_tokens.insert(i + 4, pcheck)
+
+                        i += 1
+                        
+                i += 1
+
+            pcheck = i = 0
+
+            while i < len(where_to_end_tokens):
+                j = 0
+                
+                while j < len(params):
+                    if where_to_end_tokens[i] == params[j]:
+                        pcheck = params[j]
+                        break
+                    
+                    j += 1
+                
+                if where_to_end_tokens[i] == 'not' and where_to_end_tokens[i + 1] == 'between' and (where_to_end_tokens[i + 3] == 'and' or where_to_end_tokens[i + 3] == 'or'):
+                    if int(where_to_end_tokens[i + 2]) > int(where_to_end_tokens[i + 4]):
+                        temp = where_to_end_tokens[i + 2]
+                        where_to_end_tokens[i + 2] = where_to_end_tokens[i + 4]
+                        where_to_end_tokens[i + 4] = temp
+                        
+                        pcheck = pcheck + ' is not below equal'
+                        where_to_end_tokens[i + 1] = 'above equal'
+                        where_to_end_tokens.insert(i + 4, pcheck)
+                        
+                        i += 1
+                    else:
+                        pcheck = pcheck + ' is not below equal'
+                        where_to_end_tokens[i + 1] = 'above equal'
+                        where_to_end_tokens.insert(i + 4, pcheck)
+                        
+                        i += 1
+                elif where_to_end_tokens[i] == 'is' and where_to_end_tokens[i + 1] == 'between' and (where_to_end_tokens[i + 3] == 'and' or where_to_end_tokens[i + 3] == 'or'):
+                    if int(where_to_end_tokens[i + 2]) > int(where_to_end_tokens[i + 4]):
+                        temp = where_to_end_tokens[i + 2]
+                        where_to_end_tokens[i + 2] = where_to_end_tokens[i + 4]
+                        where_to_end_tokens[i + 4] = temp
+                        
+                        pcheck = pcheck + ' is below equal'
+                        where_to_end_tokens[i + 1] = 'above equal'
+                        where_to_end_tokens.insert(i + 4, pcheck)
+                        
+                        i += 1
+                    else:
+                        pcheck = pcheck + ' is below equal'
+                        where_to_end_tokens[i + 1] = 'above equal'
+                        where_to_end_tokens.insert(i + 4, pcheck)
+                        
+                        i += 1
+                        
+                i += 1
+
+            where_to_end_tokens = list(' '.join(where_to_end_tokens).split(' '))
+
+            params = ['temperature', 'humidity', 'air', 'soil', 'light']
+            params2 = ['degree', 'percent', 'ppm', 'lux']
+                
+            pcheck = dont_pcheck = 0
+
+            i = len(where_to_end_tokens) - 3
+
+            while i >= 0:
+                if (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 2] == 'of' and where_to_end_tokens[i + 3] == 'the' and (where_to_end_tokens[i + 4] == 'temperature' or where_to_end_tokens[i + 4] == 'humidity' or where_to_end_tokens[i + 4] == 'soil' or where_to_end_tokens[i + 4] == 'light' or where_to_end_tokens[i + 4] == 'air'):
+                    where_to_end_tokens.insert(i + 1, where_to_end_tokens[i + 4])
+                    i += 1
+                elif (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 2] == 'of' and (where_to_end_tokens[i + 3] == 'temperature' or where_to_end_tokens[i + 3] == 'humidity' or where_to_end_tokens[i + 3] == 'soil' or where_to_end_tokens[i + 3] == 'light' or where_to_end_tokens[i + 3] == 'air'):
+                    where_to_end_tokens.insert(i + 1, where_to_end_tokens[i + 3])
+                    i += 1
+                                        
+                i -= 1
+
+            i = len(where_to_end_tokens) - 1
+
+            while i >= 0:
+                if where_to_end_tokens[i] != 'and' and where_to_end_tokens[i] != 'or':
+                    j = 0
+                    
+                    
+                    while j < len(params2):
+                        if where_to_end_tokens[i] == params2[j]:
+                            dont_pcheck = 1
+                            break
+                        
+                        j += 1
+                        
+                    j = 0
+                    
+                    while j < len(params):
+                        if where_to_end_tokens[i] == params[j]:
+                            pcheck = 1
+                            break
+                        
+                        j += 1
+                else:
+                    if dont_pcheck:
+                        where_to_end_tokens.insert(i + 1, 'is')
+                    elif not pcheck:
+                        pindex = i - 1
+                        flag = 0
+
+                        while pindex >= 0:
+                            pz = 0
+                            
+                            while pz < len(params):
+                                if where_to_end_tokens[pindex] == params[pz]:
+                                    flag = 1
+                                    where_to_end_tokens.insert(i + 1, params[pz])
+                                    break
+                                
+                                pz += 1
+                            
+                            if flag:
+                                break
+
+                            pindex -= 1
+                    
+                    pcheck = dont_pcheck = 0
+                                        
+                i -= 1
+
+
+            start_before_where_tokens.extend(where_to_end_tokens)
+            tokens = start_before_where_tokens
+
+            print(tokens)
+        except:
+            pass
 
         flag = 0
 
@@ -842,7 +1197,6 @@ class CleanText:
         lemmatized_tokens = [x for x in lemmatized_tokens if x != 'on']
 
         return lemmatized_tokens
-
 
 
 

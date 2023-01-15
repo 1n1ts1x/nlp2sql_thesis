@@ -70,7 +70,7 @@ class KVBL(BoxLayout):
                 sql_query = 'Sorry I am having some trouble understanding your query please try again' 
             tts.say(sql_query)
             tts.runAndWait()
-    
+      
     def thread_run_stt(self, query=''):
         r = sr.Recognizer()
         with sr.Microphone() as self.source: 
