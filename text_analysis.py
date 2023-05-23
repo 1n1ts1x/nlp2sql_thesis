@@ -15,4 +15,3 @@ class TextAnalysis:
         trees = list(cp.parse(self.q))
         list_query = [x for x in trees[0].label()['SEM'] if x]
 
-        print(' '.join(list_query))

@@ -29,6 +29,8 @@ class KVBL(BoxLayout):
         self.save_for_later = []
         self.sqlquery = ''
         self.t2d = text2digits.Text2Digits()
+        self.isOptimal = False
+        self.isGraph = False
 
     @mainthread 
     def update(self, q, f, *largs):
@@ -101,8 +103,20 @@ class KVBL(BoxLayout):
         input_query_txt = ' '.join(self.input_query.text.split())
         self.ids.output_query_txtinput.text = ''
 
+        input_query_txt = input_query_txt.lower()
+
+        if "graph" in input_query_txt or "plot" in input_query_txt or "trace" in input_query_txt :
+            self.isGraph = True
+        else:
+            self.isGraph = False
+
         repstr = ReplaceSubstring(input_query_txt)
         input_query_txt = repstr.replace_sub_str()
+
+        if "optimum" in input_query_txt:
+            self.isOptimal = True
+        else:
+            self.isOptimal = False
 
         print('INPUT: input_query_txt')
         print(input_query_txt)
@@ -113,7 +127,7 @@ class KVBL(BoxLayout):
         try:
             t.parse_tokens()
         except:
-            sql_gen = SQLGenerator(prep.clean_text(), tts, prep.lemmatized_tokens2)
+            sql_gen = SQLGenerator(prep.clean_text(), tts, prep.lemmatized_tokens2, self.isOptimal, self.isGraph)
             sql_query = sql_gen.generate_sql_statement()
 
             i = 0
@@ -129,6 +143,13 @@ class KVBL(BoxLayout):
                     sql_query = sql_geni.generate_sql_statement()
                 
                 i += 1
+        
+        sql_query = re.sub(r'\bHumidity Date_n_Time\b', 'Date_n_Time', sql_query)
+        sql_query = re.sub(r'\bTemperature Date_n_Time\b', 'Date_n_Time', sql_query)
+        sql_query = re.sub(r'\bSoil_Moisture Date_n_Time\b', 'Date_n_Time', sql_query)
+        sql_query = re.sub(r'\bLight_Intensity Date_n_Time\b', 'Date_n_Time', sql_query)
+        sql_query = re.sub(r'\bAir_Quality Date_n_Time\b', 'Date_n_Time', sql_query)
+        sql_query = re.sub(r'\bDate_n_Time than\b', 'Date_n_Time >=', sql_query)
 
         sql_query_list = list(sql_query.split(' '))
 
@@ -140,9 +161,11 @@ class KVBL(BoxLayout):
         except:
             None
 
+        print(sql_query, "sql_query FINAL")
+
         sql_query_word = sql_query
 
-        dict_chars_replace = {' comma': ',', 'greater than or equal': '>=', 'greater than': '>', 'less than or equal': '<=',
+        dict_chars_replace = {'open parenthesis': '(', 'close_parenthesis': ')', ' comma': ',', 'greater than or equal': '>=', 'greater than': '>', 'less than or equal': '<=',
         'less than': '<', 'not equal': '!=', 'equal': '=', 'hyphen': '-', 'apostrophe': "'", 'dummy': '*'}
 
         try:
@@ -151,7 +174,6 @@ class KVBL(BoxLayout):
         except:
             pass
         
-
         if 'SELECT' in sql_query:
             try:
                 self.ids.output_query_txtinput.foreground_color = 0, 1, 0, 1
@@ -259,4 +281,3 @@ class MainApp(App):
 
 if __name__ == '__main__':
     MainApp().run()
-

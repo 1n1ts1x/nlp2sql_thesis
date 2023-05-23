@@ -3,6 +3,8 @@ import re
 import speech_recognition as sr
 
 class Classifier:
+    # check = 0
+    
     def __init__(self, list_toks='', f='', p='', schem='', t='', param_err=0):
         self.list_toks = list_toks
         self.f = f
@@ -27,7 +29,6 @@ class Classifier:
             }
 
     def map_bigram_sql_condition(self, list_toks, p, t, schem_tbl):
-
         for key in self.month_list:
             i = 0
             
@@ -39,11 +40,11 @@ class Classifier:
 
                 i += 1
 
-        temp = zip(*[list_toks[i:] for i in range(0, 2)])
-        list_ngrams = [' '.join(n) for n in temp]
+        # temp = zip(*[list_toks[i:] for i in range(0, 2)])
+        # list_ngrams = [' '.join(n) for n in temp]
 
-        str = re.sub(r'\d|today', 'x', ' '.join(list_toks))
-
+        str = re.sub(r'\d|today|yesterday', 'x', ' '.join(list_toks))
+        
         str2 = re.sub(r'is|not|above|below|equal', 'y',' '.join(list_toks))
 
         try:        
@@ -62,24 +63,66 @@ class Classifier:
             s = ' '.join(li)
         except:
             return -3
-        
+
+        # if 'opt_temperature' in s and p != 'degree' and p != 0:
+        #     return -1
+
+        # if 'opt_humidity' in s and p != 'percent' and p != 0:
+        #     return -1
+
+        # if 'opt_soil' in s and p != 'percent' and p != 0:
+        #     return -1
+
+        # if 'opt_air' in s and p != 'ppm' and p != 0:
+        #     return -1
+
+        # if 'opt_light' in s and p != 'lux' and p != 0:
+        #     return -1
+
         if 'temperature' in s and p != 'degree' and p != 0:
             return -1
+
         if 'humidity' in s and p != 'percent' and p != 0:
             return -1
+
         if 'soil' in s and p != 'percent' and p != 0:
             return -1
+
         if 'air' in s and p != 'ppm' and p != 0:
             return -1
+
         if 'light' in s and p != 'lux' and p != 0:
             return -1
+
         if 'date' in s and p != 0:
             return -1
         
         check = i = 0
 
         if p == 'degree':
-
+            # if 'x opt_temperature' or 'opt_temperature is' in str:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39
             if 'x temperature' in str:
                 if 'is x' in str:
                     check = 5
@@ -103,6 +146,37 @@ class Classifier:
                     check = 7
                 if 'not above equal x' in str:
                     check = 8
+            elif 'temperature is' in str:
+                if 'is x' in str:
+                    check = 5
+                if 'going x' in str:
+                    check = 5
+                if 'not x' in str:
+                    check = 9
+                if 'above x' in str:
+                    check = 7
+                if 'below x' in str:
+                    check = 8
+                if 'above equal x' in str:
+                    check = 1
+                if 'not below x' in str:
+                    check = 1
+                if 'below equal x' in str:
+                    check = 2
+                if 'not above x' in str:
+                    check = 2
+                if 'not below equal x' in str:
+                    check = 7
+                if 'not above equal x' in str:
+                    check = 8
+            # elif 'x opt_humidity' in str:
+            #     return -1
+            # elif 'x opt_air' in str:
+            #     return -1
+            # elif 'x opt_light' in str:
+            #     return -1
+            # elif 'x opt_soil' in str:
+            #     return -1
             elif 'x humidity' in str:
                 return -1
             elif 'x air' in str:
@@ -136,8 +210,19 @@ class Classifier:
             if 'not above equal x' in str:
                 check = 8
 
-
             if not self.param_err:
+                # if list_toks.count('opt_humidity') > 1:
+                #     return -1
+                
+                # if list_toks.count('opt_air') > 1:
+                #     return -1
+
+                # if list_toks.count('opt_light') > 1:
+                #     return -1
+                
+                # if list_toks.count('opt_soil') > 1:
+                #     return -1
+
                 if list_toks.count('humidity') > 1:
                     return -1
                 
@@ -153,6 +238,18 @@ class Classifier:
                 if list_toks.count('date') > 1:
                     return -1
             else:
+                # if list_toks.count('opt_humidity') == 1 or list_toks.count('percent') == 1:
+                #     return -1
+                
+                # if list_toks.count('opt_air') == 1 or list_toks.count('ppm') == 1:
+                #     return -1
+
+                # if list_toks.count('opt_light') == 1 or list_toks.count('lux') == 1:
+                #     return -1
+                
+                # if list_toks.count('opt_soil') == 1:
+                #     return -1
+
                 if list_toks.count('humidity') == 1 or list_toks.count('percent') == 1:
                     return -1
                 
@@ -168,6 +265,52 @@ class Classifier:
                 if list_toks.count('date') == 1:
                     return -1
         elif p == 'percent':
+            # if 'x opt_humidity' or 'opt_humidity is' in str:
+            #     if 'is x' in str:
+            #         check = 43
+            #     if 'going x' in str:
+            #         check = 43
+            #     if 'not x' in str:
+            #         check = 46
+            #     if 'above x' in str:
+            #         check = 44
+            #     if 'below x' in str:
+            #         check = 45
+            #     if 'above equal x' in str:
+            #         check = 47
+            #     if 'not below x' in str:
+            #         check = 47
+            #     if 'below equal x' in str:
+            #         check = 48
+            #     if 'not above x' in str:
+            #         check = 48
+            #     if 'not below equal x' in str:
+            #         check = 44
+            #     if 'not above equal x' in str:
+            #         check = 45
+            # elif 'x opt_soil' or 'opt_soil is' in str:
+            #     if 'is x' in str:
+            #         check = 49
+            #     if 'going x' in str:
+            #         check = 49
+            #     if 'not x' in str:
+            #         check = 52
+            #     if 'above x' in str:
+            #         check = 50
+            #     if 'below x' in str:
+            #         check = 51
+            #     if 'above equal x' in str:
+            #         check = 53
+            #     if 'not below x' in str:
+            #         check = 53
+            #     if 'below equal x' in str:
+            #         check = 54
+            #     if 'not above x' in str:
+            #         check = 54
+            #     if 'not below equal x' in str:
+            #         check = 50
+            #     if 'not above equal x' in str:
+            #         check = 51
             if 'x humidity' in str:
                 if 'is x' in str:
                     check = 6
@@ -262,14 +405,29 @@ class Classifier:
                     check = 27
             elif 'x temperature' in str:
                 return -1
+            # elif 'x opt_temperature' in str:
+            #     return -1
             elif 'x air' in str:
                 return -1
+            # elif 'x opt_air' in str:
+            #     return -1
             elif 'x light' in str:
                 return -1
+            # elif 'x opt_light' in str:
+            #     return -1
             elif 'x date' in str:
                 return -1
 
             if not self.param_err:
+                # if list_toks.count('opt_temperature') > 1:
+                #     return -1
+    
+                # if list_toks.count('opt_air') > 1:
+                #     return -1
+        
+                # if list_toks.count('opt_light') > 1:
+                #     return -1
+
                 if list_toks.count('temperature') > 1:
                     return -1
                 
@@ -282,6 +440,15 @@ class Classifier:
                 if list_toks.count('date') > 1:
                     return -1
             else:
+                # if list_toks.count('opt_temperature') == 1:
+                #     return -1
+
+                # if list_toks.count('opt_air') == 1:
+                #     return -1
+
+                # if list_toks.count('opt_light') == 1:
+                #     return -1
+
                 if list_toks.count('temperature') == 1 or list_toks.count('degrees') == 1:
                     return -1
                 
@@ -370,6 +537,29 @@ class Classifier:
                 else:
                     return -3
         elif p == 'ppm':
+            # if 'x opt_air' in str:
+            #     if 'is x' in str:
+            #         check = 61
+            #     if 'going x' in str:
+            #         check = 61
+            #     if 'not x' in str:
+            #         check = 64
+            #     if 'above x' in str:
+            #         check = 62
+            #     if 'below x' in str:
+            #         check = 63
+            #     if 'above equal x' in str:
+            #         check = 65
+            #     if 'not below x' in str:
+            #         check = 65
+            #     if 'below equal x' in str:
+            #         check = 66
+            #     if 'not above x' in str:
+            #         check = 66
+            #     if 'not below equal x' in str:
+            #         check = 62
+            #     if 'not above equal x' in str:
+            #         check = 63
             if 'x air' in str:
                 if 'is x' in str:
                     check = 13
@@ -395,12 +585,20 @@ class Classifier:
                     check = 15
             elif 'x temperature' in str:
                 return -1
+            # elif 'x opt_temperature' in str:
+            #     return -1
             elif 'x humidity' in str:
                 return -1
+            # elif 'x opt_humidity' in str:
+            #     return -1
             elif 'x light' in str:
                 return -1
+            # elif 'x opt_light' in str:
+            #     return -1
             elif 'x soil' in str:
                 return -1
+            # elif 'x opt_soil' in str:
+            #     return -1
             elif 'x date' in str:
                 return -1
             if 'is x' in str:
@@ -426,8 +624,19 @@ class Classifier:
             if 'not above equal x' in str:
                 check = 15
 
-
             if not self.param_err:
+                # if list_toks.count('opt_temperature') > 1:
+                #         return -1
+
+                # if list_toks.count('opt_humidity') > 1:
+                #     return -1
+
+                # if list_toks.count('opt_light') > 1:
+                #     return -1
+
+                # if list_toks.count('opt_soil') > 1:
+                #     return -1
+
                 if list_toks.count('temperature') > 1:
                     return -1
                 
@@ -443,6 +652,18 @@ class Classifier:
                 if list_toks.count('date') > 1:
                     return -1
             else:
+                # if list_toks.count('opt_temperature') == 1 or list_toks.count('degrees') == 1:
+                #     return -1
+                
+                # if list_toks.count('opt_humidity') == 1 or list_toks.count('percent') == 1:
+                #     return -1
+
+                # if list_toks.count('opt_light') == 1 or list_toks.count('lux') == 1:
+                #     return -1
+
+                # if list_toks.count('opt_soil') == 1:
+                #     return -1
+
                 if list_toks.count('temperature') == 1 or list_toks.count('degrees') == 1:
                     return -1
                 
@@ -458,6 +679,29 @@ class Classifier:
                 if list_toks.count('date') == 1:
                     return -1
         elif p == 'lux':
+            # if 'x opt_light' in str:
+            #     if 'is x' in str:
+            #         check = 61
+            #     if 'going x' in str:
+            #         check = 61
+            #     if 'not x' in str:
+            #         check = 64
+            #     if 'above x' in str:
+            #         check = 62
+            #     if 'below x' in str:
+            #         check = 63
+            #     if 'above equal x' in str:
+            #         check = 65
+            #     if 'not below x' in str:
+            #         check = 65
+            #     if 'below equal x' in str:
+            #         check = 66
+            #     if 'not above x' in str:
+            #         check = 66
+            #     if 'not below equal x' in str:
+            #         check = 62
+            #     if 'not above equal x' in str:
+            #         check = 63
             if 'x light' in str:
                 if 'is x' in str:
                     check = 19
@@ -483,14 +727,23 @@ class Classifier:
                     check = 21
             elif 'x temperature' in str:
                 return -1
+            # elif 'x opt_temperature' in str:
+            #     return -1
             elif 'x humidity' in str:
                 return -1
+            # elif 'x opt_humidity' in str:
+            #     return -1
             elif 'x air' in str:
                 return -1
+            # elif 'x opt_air' in str:
+            #     return -1
             elif 'x soil' in str:
                 return -1
+            # elif 'x opt_soil' in str:
+            #     return -1
             elif 'x date' in str:
                 return -1
+
             if 'is x' in str:
                 check = 19
             if 'going x' in str:
@@ -516,6 +769,18 @@ class Classifier:
 
 
             if not self.param_err:
+                # if list_toks.count('opt_soil') > 1:
+                #     return -1 
+
+                # if list_toks.count('opt_temperature') > 1:
+                #     return -1
+
+                # if list_toks.count('opt_humidity') > 1:
+                #     return -1
+
+                # if list_toks.count('opt_air') > 1:
+                #     return -1
+        
                 if list_toks.count('temperature') > 1:
                     return -1
                 
@@ -531,6 +796,18 @@ class Classifier:
                 if list_toks.count('date') > 1:
                     return -1
             else:
+                # if list_toks.count('opt_temperature') == 1:
+                #     return -1
+
+                # if list_toks.count('opt_soil') == 1:
+                #     return -1
+                
+                # if list_toks.count('opt_humidity') == 1:
+                #     return -1
+                
+                # if list_toks.count('opt_air') == 1:
+                #     return -1
+
                 if list_toks.count('temperature') == 1 or list_toks.count('degrees') == 1:
                     return -1
                 
@@ -546,6 +823,236 @@ class Classifier:
                 if list_toks.count('date') == 1:
                     return -1
         else:
+            # if 'x opt_temperature' in str:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39    
+            # elif 'opt_temperature y' in str2:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39 
+            # elif 'x opt_humidity' in str:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39    
+            # elif 'opt_humidity y' in str2:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39 
+            # elif 'x opt_air' in str:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39    
+            # elif 'opt_air y' in str2:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39
+            # elif 'x opt_light' in str:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39    
+            # elif 'opt_light y' in str2:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39
+            # elif 'x opt_soil' in str:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39    
+            # elif 'opt_soil y' in str2:
+            #     if 'is x' in str:
+            #         check = 37
+            #     if 'going x' in str:
+            #         check = 37
+            #     if 'not x' in str:
+            #         check = 40
+            #     if 'above x' in str:
+            #         check = 38
+            #     if 'below x' in str:
+            #         check = 39
+            #     if 'above equal x' in str:
+            #         check = 41
+            #     if 'not below x' in str:
+            #         check = 41
+            #     if 'below equal x' in str:
+            #         check = 42
+            #     if 'not above x' in str:
+            #         check = 42
+            #     if 'not below equal x' in str:
+            #         check = 38
+            #     if 'not above equal x' in str:
+            #         check = 39
             if 'x temperature' in str:
                 if 'is x' in str:
                     check = 5
@@ -591,8 +1098,8 @@ class Classifier:
                 if 'not below equal x' in str:
                     check = 7
                 if 'not above equal x' in str:
-                    check = 8      
-
+                    check = 8
+            
             if 'x humidity' in str:
                 if 'is x' in str:
                     check = 6
@@ -615,30 +1122,32 @@ class Classifier:
                 if 'not below equal x' in str:
                     check = 10
                 if 'not above equal x' in str:
-                    check = 11
+                    check = 11     
             elif 'humidity y' in str2:
                 if 'is x' in str:
-                    check = 6
+                    return 6
+                if 'is x' in str:
+                    return 6
                 if 'going x' in str:
-                    check = 6
+                    return 6
                 if 'not x' in str:
-                    check = 12
+                    return 12
                 if 'above x' in str:
-                    check = 10
+                    return 10
                 if 'below x' in str:
-                    check = 11
+                    return 11
                 if 'above equal x' in str:
-                    check = 3
+                    return 3
                 if 'not below x' in str:
-                    check = 3
+                    return 3
                 if 'below equal x' in str:
-                    check = 4
+                    return 4
                 if 'not above x' in str:
-                    check = 4
+                    return 4
                 if 'not below equal x' in str:
-                    check = 10
+                    return 10
                 if 'not above equal x' in str:
-                    check = 11
+                    return 11
 
             if 'x air' in str:
                 if 'is x' in str:
@@ -686,7 +1195,7 @@ class Classifier:
                     check = 14
                 if 'not above equal x' in str:
                     check = 15
-
+            
             if 'x light' in str:
                 if 'is x' in str:
                     check = 19
@@ -854,6 +1363,33 @@ class Classifier:
                     check = 32
                 if 'not above equal x' in str or 'x is not above equal' in str or 'is is not above equal' in str or 'not above equal' in str:
                     check = 33
+            elif 'yesterday' in str2:
+                str = list(str.split(' '))
+                str = ' '.join(list(filter(('yesterday').__ne__, str)))
+                str = re.sub(schem_tbl, 'x', str)
+   
+                if 'is x' in str or 'x is' in str or '' in str:
+                    check = 31
+                if 'going x' in str or 'x is going' in str:
+                    check = 31
+                if 'not x' in str or 'x is not' in str or 'is is not' in str or 'not' in str:
+                    check = 34
+                if 'above x' in str or 'x is above' in str or 'is is above' in str or 'above' in str:
+                    check = 32
+                if 'below x' in str or 'x is below' in str or 'is is below' in str or 'below' in str:
+                    check = 33
+                if 'above equal x' in str or 'x is above equal' in str or 'is is above equal' in str or 'above equal' in str:
+                    check = 35
+                if 'not below x' in str or 'x is not below' in str or 'is is not below' in str or 'not below' in str:
+                    check = 35
+                if 'below equal x' in str or 'x is below equal' in str or 'is is below equal' in str or 'below equal' in str:
+                    check = 36
+                if 'not above x' in str or 'x is not above' in str or 'is is not above' in str or 'not above' in str:
+                    check = 36
+                if 'not below equal x' in str or 'x is not below equal' in str or 'is is not below equal' in str or 'not below equal' in str:
+                    check = 32
+                if 'not above equal x' in str or 'x is not above equal' in str or 'is is not above equal' in str or 'not above equal' in str:
+                    check = 33
 
 
         if self.save_month:
@@ -882,8 +1418,9 @@ class Classifier:
                 check = 32
             if 'not above equal x' in str:
                 check = 33
+
             list_toks.append(self.save_month)
-            
+
         return check
 
     def bigram_check(list_toks, schem):
@@ -915,6 +1452,8 @@ class Classifier:
                 check = 5
             if list_ngrams[i] == 'all date' or list_ngrams[i] == 'date all' or list_ngrams[i] == 'reading date':
                 check = 5
+            # if list_ngrams[i] == 'all opt_temperature' or list_ngrams[i] == 'opt_temperature all' or list_ngrams[i] == 'reading opt_temperature':
+            #     check = 6
 
             i += 1
 
@@ -1010,8 +1549,21 @@ class Classifier:
         return Classifier.fivegram_check(list_toks, f, p, schem)
 
     '''n-gram checks'''
-    def ngram_check(self):
-
+    def ngram_check(self, isGraph=False):        
+        if not isGraph:
+            if "date" in self.list_toks:
+                for i in range(len(self.list_toks)):
+                    if self.list_toks[i] == 'temperature':
+                        self.list_toks[i] = ''
+                    if self.list_toks[i] == 'humidity':
+                        self.list_toks[i] = ''
+                    if self.list_toks[i] == 'soil':
+                        self.list_toks[i] = ''
+                    if self.list_toks[i] == 'light':
+                        self.list_toks[i] = ''
+                    if self.list_toks[i] == 'air':
+                        self.list_toks[i] = ''
+            
         if not self.f: 
             list_cols = Classifier.sixgram_check(self.list_toks, self.f, self.p, self.schem)
 

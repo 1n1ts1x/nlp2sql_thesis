@@ -8,7 +8,7 @@ from datetime import date, datetime, timedelta
 
 
 class SQLGenerator:
-    def __init__(self, q='', t='', q2=''):
+    def __init__(self, q='', t='', q2='', isOptimum=False, isGraph=False):
         self.q = q
         self.t = t
         self.query = ''
@@ -19,6 +19,8 @@ class SQLGenerator:
         self.temp2 = 0
         self.sql_schema_tbl = [] 
         self.list_sql_multi = []
+        self.isOptimum = isOptimum
+        self.isGraph = isGraph
 
     def bigram(list_toks): 
         d = zip(*[list_toks[i:] for i in range(0, 2)])
@@ -29,13 +31,23 @@ class SQLGenerator:
         while i < len(list_ngrams):
             if list_ngrams[i] == 'temperature is':
                 list_toks.append(list_ngrams[i])
+            # elif list_ngrams[i] == 'opt_temperature is':
+            #     list_toks.append(list_ngrams[i])
             elif list_ngrams[i] == 'humidity is':
                 list_toks.append(list_ngrams[i])
+            # elif list_ngrams[i] == 'opt_humidity is':
+            #     list_toks.append(list_ngrams[i])
             elif list_ngrams[i] == 'air is':
+                list_toks.append(list_ngrams[i])
+            elif list_ngrams[i] == 'opt_air is':
                 list_toks.append(list_ngrams[i])
             elif list_ngrams[i] == 'soil is':
                 list_toks.append(list_ngrams[i])
+            # elif list_ngrams[i] == 'opt_soil is':
+            #     list_toks.append(list_ngrams[i])
             elif list_ngrams[i] == 'light is':
+                list_toks.append(list_ngrams[i])
+            elif list_ngrams[i] == 'opt_light is':
                 list_toks.append(list_ngrams[i])
             elif list_ngrams[i] == 'table is':
                 list_toks.append(list_ngrams[i])
@@ -75,7 +87,8 @@ class SQLGenerator:
         self.query_flag = 0
         self.t = t
         today = datetime.today()
-        
+        yesterday = today - timedelta(days = 1)
+
         param_err = 1
         temp = list_sql_syntax.copy()
         sub_sql_list = []
@@ -121,119 +134,209 @@ class SQLGenerator:
                         cls3 = Classifier(sub_sql_list, 1, param, sql_schema, self.t, param_err)
 
                         sql_check = ''
-                        sql_check = cls3.ngram_check()
+                        sql_check = cls3.ngram_check(self.isGraph)
                         self.temp2 = sql_check
                         
                         if sql_check == 1:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('temperature >=')
                         elif sql_check == 2:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('temperature <=')
                         elif sql_check == 3:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('humidity >=')
                         elif sql_check == 4:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('humidity <=')
                         elif sql_check == 5:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('temperature =')
                         elif sql_check == 6:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('humidity =')
                         elif sql_check == 7:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('temperature >')
                         elif sql_check == 8:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('temperature <')
                         elif sql_check == 9:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('temperature !=')
                         elif sql_check == 10:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('humidity >')
                         elif sql_check == 11:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('humidity <')
                         elif sql_check == 12:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('humidity !=')
                         elif sql_check == 13:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('air =')
                         elif sql_check == 14:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('air >')
                         elif sql_check == 15:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('air <')
                         elif sql_check == 16:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('air !=')
                         elif sql_check == 17:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('air >=')
                         elif sql_check == 18:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('air <=')
                         elif sql_check == 19:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('light =')
                         elif sql_check == 20:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('light >')
                         elif sql_check == 21:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('light <')
                         elif sql_check == 22:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('light !=')
                         elif sql_check == 23:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('light >=')
                         elif sql_check == 24:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('light <=')
                         elif sql_check == 25:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('soil =')
                         elif sql_check == 26:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('soil >')
                         elif sql_check == 27:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('soil <')
                         elif sql_check == 28:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('soil !=')
                         elif sql_check == 29:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('soil >=')
                         elif sql_check == 30:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('soil <=')
                         elif sql_check == 31:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('date =')
                         elif sql_check == 32:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('date >')
                         elif sql_check == 33:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('date <')
                         elif sql_check == 34:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('date !=')
                         elif sql_check == 35:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('date >=')
                         elif sql_check == 36:
-                            self.query_flag  = 0
+                            self.query_flag = 0
                             temp.append('date <=')
+                        # elif sql_check == 37:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_temperature =')
+                        # elif sql_check == 38:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_temperature >')
+                        # elif sql_check == 39:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_temperature <')
+                        # elif sql_check == 40:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_temperature !=')
+                        # elif sql_check == 41:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_temperature >=')
+                        # elif sql_check == 42:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_temperature <=')
+                        # elif sql_check == 43:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_humidity =')
+                        # elif sql_check == 44:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_humidity >')
+                        # elif sql_check == 45:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_humidity <')
+                        # elif sql_check == 46:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_humidity !=')
+                        # elif sql_check == 47:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_humidity >=')
+                        # elif sql_check == 48:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_humidity <=')
+                        # elif sql_check == 49:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_soil =')
+                        # elif sql_check == 50:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_soil >')
+                        # elif sql_check == 51:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_soil <')
+                        # elif sql_check == 52:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_soil !=')
+                        # elif sql_check == 53:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_soil >=')
+                        # elif sql_check == 54:
+                        #     self.query_flag = 0
+                        #     temp.append('opt_soil <=')
+                        elif sql_check == 55:
+                            self.query_flag = 0
+                            temp.append('opt_light =')
+                        elif sql_check == 56:
+                            self.query_flag = 0
+                            temp.append('opt_light >')
+                        elif sql_check == 57:
+                            self.query_flag = 0
+                            temp.append('opt_light <')
+                        elif sql_check == 58:
+                            self.query_flag = 0
+                            temp.append('opt_light !=')
+                        elif sql_check == 59:
+                            self.query_flag = 0
+                            temp.append('opt_light >=')
+                        elif sql_check == 60:
+                            self.query_flag = 0
+                            temp.append('opt_light <=')
+                        elif sql_check == 61:
+                            self.query_flag = 0
+                            temp.append('opt_air =')
+                        elif sql_check == 62:
+                            self.query_flag = 0
+                            temp.append('opt_air >')
+                        elif sql_check == 63:
+                            self.query_flag = 0
+                            temp.append('opt_air <')
+                        elif sql_check == 64:
+                            self.query_flag = 0
+                            temp.append('opt_air !=')
+                        elif sql_check == 65:
+                            self.query_flag = 0
+                            temp.append('opt_air >=')
+                        elif sql_check == 66:
+                            self.query_flag = 0
+                            temp.append('opt_air <=')
                         elif sql_check < 0:
-                            self.query_flag  = 1
+                            self.query_flag = 1
                             self.temp2 = sql_check
 
                         if not self.query_flag and sql_check > 0 :
@@ -257,11 +360,12 @@ class SQLGenerator:
 
                             if 'today' in val_cpy:
                                 temp.append(today.strftime("'%Y-%m-%d'"))
-
+                            elif 'yesterday' in val_cpy:
+                                temp.append(yesterday.strftime("'%Y-%m-%d'"))
                             elif month:
                                 try:
                                     d = [e for e in val_cpy if e.isnumeric() if  32 > int(e) > 0]
-                                    y = [e for e in val_cpy if e.isnumeric() if 2023 > int(e) > 1999]
+                                    y = [e for e in val_cpy if e.isnumeric() if 3000 > int(e) > 1999]
                                     day = d[0].lstrip('0')
                                     year = y[0].lstrip('0')
                                 except:
@@ -306,7 +410,6 @@ class SQLGenerator:
         '''replace query with sql keywords and append unmatched items to a list'''
         list_tokens = self.q
         list_temp_tokens = []
-
         self.year_list = list(range(2000, 2023))
         self.month_list = {
             'january': '1', 
@@ -324,29 +427,46 @@ class SQLGenerator:
             }
         self.days_list = list(range(1, 32))
 
-        sql_schema = [['temperature', 'humidity', 'air', 'soil', 'light', 'date'], ['']]
+
+        # sql_schema = [['temperature', 'humidity', 'air', 'soil', 'light', 'date', 'opt_temperature', 'opt_humidity', 'opt_soil', 'opt_light', 'opt_air'], ['']]
+        sql_schema = [['temperature', 'humidity', 'air', 'soil', 'light', 'date', 'opt_light', 'opt_air'], ['']]
 
         temp = 0
         cls = Classifier(list_tokens, 0, 0, sql_schema, self.t)
-        temp = cls.ngram_check()
+        temp = cls.ngram_check(self.isGraph)
 
         num_err = re.sub('\d', 'x', ' '.join(list_tokens))
 
         if 'temperature x' in num_err:
             self.err = 'Sorry I am having some trouble understanding your query please try again'
             return self.err
+        # if 'opt_temperature x' in num_err:
+        #     self.err = 'Sorry I am having some trouble understanding your query please try again'
+        #     return self.err
         if 'humidity x' in num_err:
             self.err = 'Sorry I am having some trouble understanding your query please try again'
             return self.err
+        # if 'opt_humidity x' in num_err:
+        #     self.err = 'Sorry I am having some trouble understanding your query please try again'
+        #     return self.err
         if 'air x' in num_err:
+            self.err = 'Sorry I am having some trouble understanding your query please try again'
+            return self.err
+        if 'opt_air x' in num_err:
             self.err = 'Sorry I am having some trouble understanding your query please try again'
             return self.err
         if 'light x' in num_err:
             self.err = 'Sorry I am having some trouble understanding your query please try again'
             return self.err
+        if 'opt_light x' in num_err:
+            self.err = 'Sorry I am having some trouble understanding your query please try again'
+            return self.err
         if 'soil x' in num_err:
             self.err = 'Sorry I am having some trouble understanding your query please try again'
             return self.err
+        # if 'opt_soil x' in num_err:
+        #     self.err = 'Sorry I am having some trouble understanding your query please try again'
+        #     return self.err
         if 'date x' in num_err:
             self.err = 'Sorry I am having some trouble understanding your query please try again'
             return self.err
@@ -366,11 +486,16 @@ class SQLGenerator:
             'ppm': 'WHERE',
             'lux': 'WHERE',
             'temperature is': 'WHERE',
+            # 'opt_temperature is': 'WHERE',
             'humidity is': 'WHERE',
+            # 'opt_humidity is': 'WHERE',
             'air is': 'WHERE',
+            'opt_air is': 'WHERE',
             'soil is': 'WHERE',
+            # 'opt_soil is': 'WHERE',
             'date is': 'WHERE',
             'light is': 'WHERE',
+            'opt_light is': 'WHERE',
             'table is': 'WHERE',
             'plant is': 'WHERE',
             'plant not': 'WHERE',
@@ -423,6 +548,16 @@ class SQLGenerator:
                 list_tokens.append('WHERE')
         if 'date y' in add_WHERE_cond:
                 list_tokens.append('WHERE')
+        # if 'opt_temperature y' in add_WHERE_cond:
+        #     list_tokens.append('WHERE')
+        # if 'opt_humidity y' in add_WHERE_cond:
+        #     list_tokens.append('WHERE')
+        # if 'opt_soil y' in add_WHERE_cond:
+        #     list_tokens.append('WHERE')
+        if 'opt_light y' in add_WHERE_cond:
+            list_tokens.append('WHERE')
+        if 'opt_air y' in add_WHERE_cond:
+            list_tokens.append('WHERE')
 
         #remove sql keyword redundancies
         list_tokens = list(set(list_tokens)) 
@@ -448,8 +583,8 @@ class SQLGenerator:
         '''map list items with user-defined schema'''    
         temp2 = 0
         cls2 = Classifier(list_temp_tokens, 1, param, sql_schema, self.t)
-        temp2 = cls2.ngram_check()
-
+        temp2 = cls2.ngram_check(self.isGraph)
+        
         sql_flag = 0
 
         humidity_or_soil = 0
@@ -600,6 +735,31 @@ class SQLGenerator:
                                 list_sql_syntax.insert(1, 'date')
 
                                 break
+                            # elif temp == 7:
+                            #     flag = 1
+                            #     list_sql_syntax.insert(1, 'opt_temperature')
+
+                            #     break
+                            # elif temp == 8:
+                            #     flag = 1
+                            #     list_sql_syntax.insert(1, 'opt_humidity')
+
+                            #     break
+                            # elif temp == 9:
+                            #     flag = 1
+                            #     list_sql_syntax.insert(1, 'opt_soil')
+
+                            #     break
+                            elif temp == 10:
+                                flag = 1
+                                list_sql_syntax.insert(1, 'opt_light')
+
+                                break
+                            elif temp == 11:
+                                flag = 1
+                                list_sql_syntax.insert(1, 'opt_air')
+
+                                break
                             elif list_temp_tokens[i] == 'all' or list_temp_tokens[i] == 'reading':
                                 flag = 1
                                 list_sql_syntax.insert(1, '*')
@@ -678,6 +838,31 @@ class SQLGenerator:
                             elif temp == 6:
                                 flag = 1
                                 list_sql_syntax.insert(1, 'date')
+
+                                break
+                            # elif temp == 7:
+                            #     flag = 1
+                            #     list_sql_syntax.insert(1, 'opt_temperature')
+
+                            #     break
+                            # elif temp == 8:
+                            #     flag = 1
+                            #     list_sql_syntax.insert(1, 'opt_humidity')
+
+                            #     break
+                            # elif temp == 9:
+                            #     flag = 1
+                            #     list_sql_syntax.insert(1, 'opt_soil')
+
+                            #     break
+                            elif temp == 10:
+                                flag = 1
+                                list_sql_syntax.insert(1, 'opt_light')
+
+                                break
+                            elif temp == 11:
+                                flag = 1
+                                list_sql_syntax.insert(1, 'opt_air')
 
                                 break
                             elif list_temp_tokens[i] == 'all' or list_temp_tokens[i] == 'reading':
@@ -824,10 +1009,99 @@ class SQLGenerator:
                 elif temp2 == 36:
                     sql_flag = 0
                     list_sql_syntax.append('date <=')
+                # elif temp2 == 37:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_temperature =')
+                # elif temp2 == 38:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_temperature >')
+                # elif temp2 == 39:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_temperature <')
+                # elif temp2 == 40:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_temperature !=')
+                # elif temp2 == 41:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_temperature >=')
+                # elif temp2 == 42:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_temperature <=')
+                # elif temp2 == 43:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_humidity =')
+                # elif temp2 == 44:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_humidity >')
+                # elif temp2 == 45:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_humidity <')
+                # elif temp2 == 46:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_humidity !=')
+                # elif temp2 == 47:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_humidity >=')
+                # elif temp2 == 48:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_humidity <=')
+                # elif temp2 == 49:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_soil =')
+                # elif temp2 == 50:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_soil >')
+                # elif temp2 == 51:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_soil <')
+                # elif temp2 == 52:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_soil !=')
+                # elif temp2 == 53:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_soil >=')
+                # elif temp2 == 54:
+                #     sql_flag = 0
+                #     list_sql_syntax.append('opt_soil <=')
+                elif temp2 == 55:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_light =')
+                elif temp2 == 56:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_light >')
+                elif temp2 == 57:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_light <')
+                elif temp2 == 58:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_light !=')
+                elif temp2 == 59:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_light >=')
+                elif temp2 == 60:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_light <=')
+                elif temp2 == 61:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_air =')
+                elif temp2 == 62:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_air >')
+                elif temp2 == 63:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_air <')
+                elif temp2 == 64:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_air !=')
+                elif temp2 == 65:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_air >=')
+                elif temp2 == 66:
+                    sql_flag = 0
+                    list_sql_syntax.append('opt_air <=')
                 elif temp2 < 0:
                     sql_flag = 1
                 else:
-
                     if not sql_flag:
                         i = 0
 
@@ -855,6 +1129,7 @@ class SQLGenerator:
                     day = ''
                     year = ''
                     today = datetime.today()
+                    yesterday = today - timedelta(days = 1)
                     str_date = ''
 
                     for key in self.month_list:
@@ -871,7 +1146,8 @@ class SQLGenerator:
 
                     if 'today' in list_temp_tokens:
                         list_sql_syntax.append(today.strftime("'%Y-%m-%d'"))
-
+                    elif 'yesterday' in list_temp_tokens:
+                        list_sql_syntax.append(yesterday.strftime("'%Y-%m-%d'"))
                     elif month:
                         try:
                             d = [i for i in list_temp_tokens if i.isnumeric() if  32 > int(i) > 0]
@@ -983,8 +1259,84 @@ class SQLGenerator:
             dict_chars_replace = {',': ' comma', '>=': 'greater than or equal', '>': 'greater than', '<=': 'less than or equal', 
             '<': 'less than', '!=': 'not equal', '=': 'equal', '-': 'hyphen', "'": 'apostrophe'}
 
+            if (self.isOptimum):
+                if "date" in sql_tts_query:
+                    sql_tts_query = sql_tts_query.replace("AND", "WHERE", 1)
+                    sql_tts_query = sql_tts_query.replace("OR", "WHERE", 1)
+
             for key, value in dict_chars_replace.items():
                 sql_tts_query = sql_tts_query.replace(key, value)
+
+            sql_tts_query = re.sub(r'\bdate\b', 'Date_n_Time', sql_tts_query)
+            sql_tts_query = re.sub(r'\btemperature\b', 'Temperature', sql_tts_query)
+            sql_tts_query = re.sub(r'\bhumidity\b', 'Humidity', sql_tts_query)
+            sql_tts_query = re.sub(r'\blight\b', 'Light_Intensity', sql_tts_query)
+            sql_tts_query = re.sub(r'\bsoil\b', 'Soil_Moisture', sql_tts_query)
+            sql_tts_query = re.sub(r'\bair\b', 'Air_Quality', sql_tts_query)
+
+            sql_tts_query = re.sub(r'\btomato_table\b', 'sensor_node_1_tb', sql_tts_query)
+            sql_tts_query = re.sub(r'\bgrape_table\b', 'sensor_node_2_tb', sql_tts_query)
+            sql_tts_query = re.sub(r'\bwheat_table\b', 'sensor_node_3_tb', sql_tts_query)
+            sql_tts_query = re.sub(r'\bcorn_table\b', 'sensor_node_4_tb', sql_tts_query)
+            sql_tts_query = re.sub(r'\bFROM WHERE\b', 'FROM', sql_tts_query)
+            sql_tts_query = re.sub(r'\bSELECT WHERE\b', 'SELECT', sql_tts_query)
+
+            sql_tts_query_list = list(sql_tts_query.split(" "))
+
+            for i in range(len(sql_tts_query_list)):
+                if "apostrophe" in sql_tts_query_list[i]:
+                    if sql_tts_query_list[i - 2] != "Date_n_Time" and sql_tts_query_list[i - 3] != "Date_n_Time" and sql_tts_query_list[i - 4] != "Date_n_Time" and sql_tts_query_list[i - 5] != "Date_n_Time":
+                        sql_tts_query_list[i - 2] = "Date_n_Time"   
+            
+            sql_tts_query = ' '.join(sql_tts_query_list)
+
+
+            if (self.isOptimum):
+                sql_tts_query_list = list(sql_tts_query.split(" "))
+                chunk = sql_tts_query_list[len(sql_tts_query_list) - sql_tts_query_list[::-1].index('SELECT') : sql_tts_query_list.index('FROM')]
+                
+                chunk_str = ' '.join(chunk)
+
+                if "WHERE" in sql_tts_query_list:
+                    for i in range(len(sql_tts_query_list)):
+                        if sql_tts_query_list[i] == 'WHERE':
+                            if sql_tts_query_list[i - 1] != "sensor_node_1_tb" and sql_tts_query_list[i - 1] != "sensor_node_2_tb" and sql_tts_query_list[i - 1] != "sensor_node_3_tb" and sql_tts_query_list[i - 1] != "sensor_node_4_tb" and sql_tts_query_list[i - 1] != "*" and sql_tts_query_list[i - 1] != "dummy":
+                                sql_tts_query_list.insert(i - 3, 'WHERE')
+                                break
+                    
+                    first_where = sql_tts_query_list.index("WHERE")
+
+                    for i in range(len(sql_tts_query_list)):
+                        if sql_tts_query_list[i] == 'WHERE' and i != first_where:
+                            sql_tts_query_list[i] = 'AND'
+
+                if "WHERE" in sql_tts_query:
+                    if "Temperature" in chunk_str:
+                        sql_tts_query_list.append(("AND Temperature >= (SELECT opt_temp_to FROM ideal_parameters) AND Temperature <= (SELECT opt_temp_from FROM ideal_parameters)"))
+                    elif "Humidity" in chunk_str:
+                        sql_tts_query_list.append(("AND Humidity >= (SELECT opt_humid_to FROM ideal_parameters) AND Humidity <= (SELECT opt_humid_from FROM ideal_parameters)"))
+                    elif "Light_Intensity" in chunk_str:
+                        sql_tts_query_list.append(("AND Light_Intensity >= (SELECT opt_light_to FROM ideal_parameters) AND Light_Intensity <= (SELECT opt_light_from FROM ideal_parameters)"))
+                    elif "Soil_Moisture" in chunk_str:
+                        sql_tts_query_list.append(("AND Soil_Moisture >= (SELECT opt_soil_to FROM ideal_parameters) AND Soil_Moisture <= (SELECT opt_soil_from FROM ideal_parameters)"))
+                    elif "Air_Quality" in chunk_str:
+                        sql_tts_query_list.append(("AND Air_Quality >= (SELECT opt_air_to FROM ideal_parameters) AND Air_Quality <= (SELECT opt_air_from FROM ideal_parameters)"))
+                else:
+                    if "Temperature" in chunk_str:
+                        sql_tts_query_list.append(("WHERE Temperature >= (SELECT opt_temp_to FROM ideal_parameters) AND Temperature <= (SELECT opt_temp_from FROM ideal_parameters)"))
+                    elif "Humidity" in chunk_str:
+                        sql_tts_query_list.append(("WHERE Humidity >= (SELECT opt_humid_to FROM ideal_parameters) AND Humidity <= (SELECT opt_humid_from FROM ideal_parameters)"))
+                    elif "Light_Intensity" in chunk_str:
+                        sql_tts_query_list.append(("WHERE Light_Intensity >= (SELECT opt_light_to FROM ideal_parameters) AND Light_Intensity <= (SELECT opt_light_from FROM ideal_parameters)"))
+                    elif "Soil_Moisture" in chunk_str:
+                        sql_tts_query_list.append(("WHERE Soil_Moisture >= (SELECT opt_soil_to FROM ideal_parameters) AND Soil_Moisture <= (SELECT opt_soil_from FROM ideal_parameters)"))
+                    elif "Air_Quality" in chunk_str:
+                        sql_tts_query_list.append(("WHERE Air_Quality >= (SELECT opt_air_to FROM ideal_parameters) AND Air_Quality <= (SELECT opt_air_from FROM ideal_parameters)"))
+
+                sql_tts_query_str = ' '.join(sql_tts_query_list)             
+
+                return sql_tts_query_str
+
 
             return sql_tts_query
 

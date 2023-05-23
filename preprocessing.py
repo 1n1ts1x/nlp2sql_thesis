@@ -4,6 +4,7 @@ import re
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+import datetime
 
 class CleanText:
     def __init__(self, q='', save_for_later=[], pff=True):
@@ -11,15 +12,39 @@ class CleanText:
         self.tokens2 = ''
         self.stopwords2 = ''
         self.lemmatized_tokens2 = ''
-        self.params = ['temperature', 'humidity', 'soil', 'light', 'air', 'all', 'date']
+        self.params = ['temperature', 'humidity', 'soil', 'light', 'air', 'all', 'date', 'opt_temperature', 'opt_humidity', 'opt_soil', 'opt_light', 'opt_air']
         self.save_for_later = save_for_later
         self.pff = pff
+        self.isDateFlag = False
+        self.month_ls = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+        self.countMonth = 0
 
     def arrange_tokens(self, ls, cmd_list):
         month_list = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
         params_list = ['temperature', 'degree', 'humidity', 'soil', 'percent', 'air', 'ppm', 'light', 
-        'lux', 'date']
+        'lux', 'date', 'opt_temperature', 'opt_humidity', 'opt_soil', 'opt_light', 'opt_air']
+
+        try:
+            i = 0
+            while i < len(ls):
+                j = 0
+                while j < len(month_list):
+                    if ls[i] == month_list[j]:
+                        self.countMonth += 1
+                        if int(ls[i + 1]) < 32:
+                            try:
+                                if int(ls[i + 2]) > 1999:
+                                    break
+                            except:
+                                ls.insert(i + 2, "2023")
+                        else:
+                            break
+                    j += 1
+                i += 1
+        except:
+            pass
         
+
         try:
             i = 0
 
@@ -35,6 +60,7 @@ class CleanText:
                 i += 1
         except:
             None
+
             
         ls = [x for x in ls if x != '']
 
@@ -112,14 +138,14 @@ class CleanText:
             
             if 'today' in ls and month:
                 i = len(ls) - 1
-            
+
                 while i >= 0:
                     j = i
                 
                     if ls[i] == 'today':
                         index5 = i
                         while j >= 0:
-                            if ls[j] != 'table' and ls[j] != 'date' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'date' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
                                 list_date.append(ls[j])
                             else:
                                 break
@@ -149,7 +175,7 @@ class CleanText:
                     elif (ls[i] == 'and' or ls[i] == 'or') and ls[i + 1] == 'is' and ls[i+2] == 'not' and (ls[i + 3] == 'on' or ls[i + 3] == 'above' or ls[i + 3] == 'below') and (ls[i + 4] == month or ls[i + 5] == month or ls[i + 6] == month):
                         index9 = i
                         while j < len(ls):
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
                                 list_date2.append(ls[j])
                                 ffdate3 = 1
                                 ffdate2 = 1
@@ -163,7 +189,7 @@ class CleanText:
                     elif not ffdate3 and (ls[i] == 'and' or ls[i] == 'or') and (ls[i + 1] == 'not' or ls[i + 1] == 'is') and (ls[i + 2] == 'on' or ls[i + 2] == 'above' or ls[i + 2] == 'below') and (ls[i + 3] == month or ls[i + 4] == month or ls[i + 5] == month):
                         index9 = i
                         while j < len(ls):
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
                                 list_date2.append(ls[j])
 
                                 ffdate2 = 1
@@ -176,7 +202,7 @@ class CleanText:
                     elif not ffdate2 and ls[i] == 'not' and (ls[i + 1] == 'on' or ls[i + 1] == 'above' or ls[i + 1] == 'below') and (ls[i + 2] == month or ls[i + 3] == month or ls[i + 4] == month):
                         index9 = i
                         while j < len(ls):
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
                                 list_date2.append(ls[j])
                                 ffdate = 1
                             else:
@@ -188,7 +214,7 @@ class CleanText:
                     elif not ffdate and (ls[i] == 'on' or ls[i] == 'above' or ls[i] == 'below' or  ls[i] == 'and' or ls[i] == 'or') and (ls[i + 1] == month or ls[i + 2] == month or ls[i + 3] == month):
                         index7 = i
                         while j < len(ls):
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'today' and ls[j] != 'of':
                                 list_date2.append(ls[j])
                             else:
                                 break
@@ -200,14 +226,13 @@ class CleanText:
 
             elif 'today' in ls:
                 i = len(ls) - 1
-            
                 while i >= 0:
                     j = i
                 
                     if ls[i] == 'today':
                         index5 = i
                         while j >= 0:
-                            if ls[j] != 'table' and ls[j] != 'date' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'date' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
                                 list_date.append(ls[j])
                             else:
                                 break
@@ -234,28 +259,46 @@ class CleanText:
                             j += 1
                     i += 1
 
-            elif month:
+            elif 'yesterday' in ls and month:
+                i = len(ls) - 1
+
+                while i >= 0:
+                    j = i
+                
+                    if ls[i] == 'yesterday':
+                        index5 = i
+                        while j >= 0:
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'date' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
+                                list_date.append(ls[j])
+                            else:
+                                break
+                            
+                            index6 = j
+                            j -= 1
+                    i -= 1    
+            
+                list_date.reverse()
+                
                 i = 0
 
                 while i < len(ls):
                     j = i
+
                     if ls[i] == cmd:
                         index = i
-                        
                         while j < len(ls):
-                            if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not':
+                            if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != 'yesterday' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not' and 'yesterday' in ls:
                                 list_cmd.append(ls[j])
-
                             else:
                                 break
                             
                             index2 = j
                             j += 1
-
-                    elif (ls[i] == 'and' or ls[i] == 'or') and ls[i + 1] == 'is' and ls[i + 2] == 'not' and (ls[i + 3] == 'on' or ls[i + 3] == 'above' or ls[i + 3] == 'below') and (ls[i + 4] == month or ls[i + 5] == month or ls[i + 6] == month):
+                            
+                    elif (ls[i] == 'and' or ls[i] == 'or') and ls[i + 1] == 'is' and ls[i+2] == 'not' and (ls[i + 3] == 'on' or ls[i + 3] == 'above' or ls[i + 3] == 'below') and (ls[i + 4] == month or ls[i + 5] == month or ls[i + 6] == month):
                         index9 = i
                         while j < len(ls):
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'yesterday' and ls[j] != 'of':
                                 list_date2.append(ls[j])
                                 ffdate3 = 1
                                 ffdate2 = 1
@@ -269,7 +312,112 @@ class CleanText:
                     elif not ffdate3 and (ls[i] == 'and' or ls[i] == 'or') and (ls[i + 1] == 'not' or ls[i + 1] == 'is') and (ls[i + 2] == 'on' or ls[i + 2] == 'above' or ls[i + 2] == 'below') and (ls[i + 3] == month or ls[i + 4] == month or ls[i + 5] == month):
                         index9 = i
                         while j < len(ls):
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'yesterday' and ls[j] != 'of':
+                                list_date2.append(ls[j])
+
+                                ffdate2 = 1
+                                ffdate = 1
+                            else:
+                                break
+                            
+                            index10 = j
+                            j += 1
+                    elif not ffdate2 and ls[i] == 'not' and (ls[i + 1] == 'on' or ls[i + 1] == 'above' or ls[i + 1] == 'below') and (ls[i + 2] == month or ls[i + 3] == month or ls[i + 4] == month):
+                        index9 = i
+                        while j < len(ls):
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'yesterday' and ls[j] != 'of':
+                                list_date2.append(ls[j])
+                                ffdate = 1
+                            else:
+                                break
+                            
+                            index10 = j
+                            j += 1
+                            
+                    elif not ffdate and (ls[i] == 'on' or ls[i] == 'above' or ls[i] == 'below' or  ls[i] == 'and' or ls[i] == 'or') and (ls[i + 1] == month or ls[i + 2] == month or ls[i + 3] == month):
+                        index7 = i
+                        while j < len(ls):
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'yesterday' and ls[j] != 'of':
+                                list_date2.append(ls[j])
+                            else:
+                                break
+                            
+                            index8 = j
+                            j += 1
+                            
+                    i += 1
+
+            elif 'yesterday' in ls:
+                i = len(ls) - 1
+                while i >= 0:
+                    j = i
+                
+                    if ls[i] == 'yesterday':
+                        index5 = i
+                        while j >= 0:
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'date' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light' and not ls[j].isnumeric() and ls[j] != 'table' and ls[j] != 'readings' and ls[j] != 'reading' and ls[j] != month and ls[j] != 'all':
+                                list_date.append(ls[j])
+                            else:
+                                break
+                            index6 = j
+                            j -= 1
+                    i -= 1    
+                    
+                list_date.reverse()
+                
+                i = 0
+
+                while i < len(ls):
+                    j = i
+
+                    if ls[i] == cmd:
+                        index = i
+                        while j < len(ls):
+                            if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != 'yesterday' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not' and 'yesterday' in ls:
+                                list_cmd.append(ls[j])
+            
+                            else:
+                                break
+                            index2 = j
+                            j += 1
+                    i += 1
+
+            elif month:
+                i = 0
+                self.isDateFlag = True
+                while i < len(ls):
+                    j = i
+                    if ls[i] == cmd:
+                        index = i
+
+                        while j < len(ls):
+                            if ls[j] != 'of' and ls[j] != 'where' and ls[j] != 'on' and ls[j] != 'above' and ls[j] != 'below' and ls[j] != 'not':
+                                list_cmd.append(ls[j])
+
+                            else:
+                                break
+                            
+                            index2 = j
+                            j += 1
+
+                    elif (ls[i] == 'and' or ls[i] == 'or') and ls[i + 1] == 'is' and ls[i + 2] == 'not' and (ls[i + 3] == 'on' or ls[i + 3] == 'above' or ls[i + 3] == 'below') and (ls[i + 4] == month or ls[i + 5] == month or ls[i + 6] == month):
+                        index9 = i
+                        while j < len(ls):
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
+                                list_date2.append(ls[j])
+                                ffdate3 = 1
+                                ffdate2 = 1
+                                ffdate = 1
+                            else:
+                                break
+                            
+                            index10 = j
+                            j += 1
+                            
+                    elif not ffdate3 and (ls[i] == 'and' or ls[i] == 'or') and (ls[i + 1] == 'not' or ls[i + 1] == 'is') and (ls[i + 2] == 'on' or ls[i + 2] == 'above' or ls[i + 2] == 'below') and (ls[i + 3] == month or ls[i + 4] == month or ls[i + 5] == month):
+                        index9 = i
+                        while j < len(ls):
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
                                 list_date2.append(ls[j])
 
                                 ffdate2 = 1
@@ -282,7 +430,7 @@ class CleanText:
                     elif not ffdate2 and (ls[i] == 'not' or ls[i] == 'is') and (ls[i + 1] == 'on' or ls[i + 1] == 'above' or ls[i + 1] == 'below') and (ls[i + 2] == month or ls[i + 3] == month or ls[i + 4] == month):
                         index9 = i
                         while j < len(ls):
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
                                 list_date2.append(ls[j])
                                 ffdate = 1
                             else:
@@ -294,7 +442,7 @@ class CleanText:
                     elif not ffdate and (ls[i] == 'on' or ls[i] == 'above' or ls[i] == 'below' or  ls[i] == 'and' or ls[i] == 'or') and (ls[i + 1] == month or ls[i + 2] == month or ls[i + 3] == month):
                         index7 = i
                         while j < len(ls):
-                            if ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
+                            if ls[j] != 'opt_temperature' and ls[j] != 'opt_humidity' and ls[j] != 'opt_soil' and ls[j] != 'opt_light' and ls[j] != 'opt_air' and ls[j] != 'table' and ls[j] != 'degree' and ls[j] != 'percent' and ls[j] != 'lux' and ls[j] != 'ppm' and ls[j] != 'temperature' and ls[j] != 'soil' and ls[j] != 'humidity' and ls[j] != 'air' and ls[j] != 'light'and ls[j] != 'table' and ls[j] != 'where' and ls[j] != cmd and ls[j] != 'of':
                                 list_date2.append(ls[j])
                             else:
                                 break
@@ -333,7 +481,7 @@ class CleanText:
         i = len(list_cmd) - 1
 
         while i >= 0:
-            if (list_cmd[i] != 'temperature' and list_cmd[i] != 'humidity' and list_cmd[i] != 'soil' and list_cmd[i] != 'light' and list_cmd[i] != 'air' and list_cmd[i] != 'date' and list_cmd[i] != 'all'):
+            if (list_cmd[i] != 'opt_temperature' and list_cmd[i] != 'opt_humidity' and list_cmd[i] != 'opt_soil' and list_cmd[i] != 'opt_light' and list_cmd[i] != 'opt_air' and list_cmd[i] != 'temperature' and list_cmd[i] != 'humidity' and list_cmd[i] != 'soil' and list_cmd[i] != 'light' and list_cmd[i] != 'air' and list_cmd[i] != 'date' and list_cmd[i] != 'all'):
                 list_cmd[i] = ''
             else:
                 break
@@ -390,7 +538,7 @@ class CleanText:
         except:
             pass
 
-
+            
         seen = set()
         seen_add = seen.add
         list_table = [x for x in list_table if not (x in seen or seen_add(x))]
@@ -417,7 +565,7 @@ class CleanText:
                 break
             
             i -= 1
-            
+    
         list_date2 = [x for x in list_date2 if x != '']
 
         try:
@@ -469,7 +617,7 @@ class CleanText:
         i = len(list_condition) - 1
 
         while i >= 0:
-            if (list_condition[i] != 'temperature' and list_condition[i] != 'humidity' and list_condition[i] != 'soil' and list_condition[i] != 'light' and list_condition[i] != 'air' and list_condition[i] != 'date' and list_condition[i] != 'degree' and list_condition[i] != 'percent' and list_condition[i] != 'ppm' and list_condition[i] != 'lux' and not list_condition[i].isnumeric()):
+            if (list_condition[i] != 'opt_temperature' and list_condition[i] != 'opt_humidity' and list_condition[i] != 'opt_soil' and list_condition[i] != 'opt_light' and list_condition[i] != 'opt_air' and list_condition[i] != 'temperature' and list_condition[i] != 'humidity' and list_condition[i] != 'soil' and list_condition[i] != 'light' and list_condition[i] != 'air' and list_condition[i] != 'date' and list_condition[i] != 'degree' and list_condition[i] != 'percent' and list_condition[i] != 'ppm' and list_condition[i] != 'lux' and not list_condition[i].isnumeric()):
                 list_condition[i] = ''
             else:
                 break
@@ -495,7 +643,6 @@ class CleanText:
             None
 
         tokens = []
-
         tokens = list_cmd.copy()
         tokens.extend(list_table)
         tokens.extend(list_condition)
@@ -507,7 +654,15 @@ class CleanText:
                 list_date.insert(1, 'is')
                 
             tokens.extend(list_date)
-            
+
+        if 'yesterday' in ls:
+            if 'and' not in list_date and 'or' not in list_date and list_date:
+                list_date.insert(0, 'and')
+            if 'is' not in list_date and list_date:
+                list_date.insert(1, 'is')
+                
+            tokens.extend(list_date)
+
         if list_date2:
             if 'not' in list_date2 and 'and' not in list_date2 and 'or' not in list_date2 and list_date2:
                 list_date2.insert(list_date2.index('not'), 'and')
@@ -527,10 +682,10 @@ class CleanText:
             if 'date' not in list_date2 and 'is' not in list_date2 and 'or' in list_date2 and list_date2:
                 list_date2.insert(list_date2.index('or') + 1, 'date')
                 list_date2.insert(list_date2.index('date') + 1, 'is')
-            
+
             if ('above' in list_date2 or 'below' in list_date2) and 'and' not in list_date2:
                 list_date2.insert(0, 'and')
-            
+        
             seen = set()
             seen_add = seen.add
             list_date2 = [x for x in list_date2 if not (x in seen or seen_add(x))]
@@ -539,8 +694,8 @@ class CleanText:
                 list_date2 = [x for x in list_date2 if x != 'and']
         
             tokens.extend(list_date2)
-            
-        
+
+
         if tokens[tokens.index('table') - 1] == '' or tokens[tokens.index('table') - 1] == 'all':
             tokens[tokens.index('table') - 1] = 'dummy'
 
@@ -549,7 +704,7 @@ class CleanText:
             i = len(list_cmd) - 1
 
             while i >= 0:
-                if (list_cmd[i] != 'temperature' and list_cmd[i] != 'humidity' and list_cmd[i] != 'soil' and list_cmd[i] != 'light' and list_cmd[i] != 'air' and list_cmd[i] != 'date' and list_cmd[i] != 'all'):
+                if (list_cmd[i] != 'opt_temperature' and list_cmd[i] != 'opt_humidity' and list_cmd[i] != 'opt_soil' and list_cmd[i] != 'opt_light' and list_cmd[i] != 'opt_air' and list_cmd[i] != 'temperature' and list_cmd[i] != 'humidity' and list_cmd[i] != 'soil' and list_cmd[i] != 'light' and list_cmd[i] != 'air' and list_cmd[i] != 'date' and list_cmd[i] != 'all'):
                     list_cmd[i] = ''
                 else:
                     break
@@ -591,12 +746,46 @@ class CleanText:
         except:
             None
 
+    # def insert_optimum_params(self, tokens, start_str, end_idx, flag):
+    #     params_list = ['temperature', 'degree', 'humidity', 'soil', 'percent', 'air', 'ppm', 'light', 'lux', 'date']
+
+    #     start = tokens.index(start_str) if start_str in tokens else None
+    #     end = end_idx
+
+    #     if not flag:
+    #         end = tokens.index(end)
+    #     else:
+    #         end -= 1
+
+        
+    #     if start is not None:
+
+    #         while start < end:
+    #             i = 0
+    #             while i < len(params_list):
+    #                 if tokens[end] == params_list[i]:
+    #                     tokens[end] = "opt_" + tokens[end]
+    #                     end -= 1
+    #                 i += 1
+                    
+    #             end -= 1
+
+    #         i = 0
+
+    #         while i < len(params_list):
+    #             if tokens[start + 1] == params_list[i]:
+    #                 tokens[start + 1] = "opt_" + tokens[start + 1]
+    #                 break
+    #             i += 1
+                
+    #         del tokens[start]
+
+    #     return tokens
+
     '''transform input query to cleaner text'''
     def clean_text(self):
         cmd_list = ['show', 'display', 'list', 'get', 'what']
 
-        print(self.pff)
-        print('go')
         #convert query to lowercase
         lowercase_query = self.q.lower()
 
@@ -607,188 +796,27 @@ class CleanText:
         print('BEFORE: tokens = self.arrange_tokens(tokens, cmd_list)')    
         print(tokens)
 
-        tokens = self.arrange_tokens(tokens, cmd_list)
+        saved_date = []
 
+        try:
+            for i in range(len(tokens)):
+                if tokens[i] == 'date' and tokens[i + 1] == 'is' and tokens[i + 2] == 'not' and tokens[i + 3] == 'above':
+                    saved_date.append(tokens[i + 4])
+                    saved_date.append(tokens[i + 5])
+                    saved_date.append(tokens[i + 6])
+        except:
+            pass
+
+        tokens = self.arrange_tokens(tokens, cmd_list)
         print('AFTER: tokens = self.arrange_tokens(tokens, cmd_list)')    
         print(tokens)
         
         try:
             start_before_where_tokens = tokens[:tokens.index('where')]
-            print('start_before_where_tokens')
-            print(start_before_where_tokens)
+
             where_to_end_tokens = tokens[tokens.index('where'):]
-            print('where_to_end_tokens')
-            print(where_to_end_tokens)
 
-            # params = ['temperature', 'humidity', 'air', 'soil', 'light', 'degree', 'percent', 'ppm', 'lux']
-
-            # pcheck = i = 0
-
-            # while i < len(where_to_end_tokens):
-            #     j = 0
-                
-            #     while j < len(params):
-            #         if where_to_end_tokens[i] == params[j]:
-            #             pcheck = params[j]
-            #             break
-                    
-            #         j += 1
-                
-            #     if (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 1] == 'not' and where_to_end_tokens[i + 2] == 'between' and (where_to_end_tokens[i + 4] == 'and' or where_to_end_tokens[i + 4] == 'or'):
-            #         if int(where_to_end_tokens[i + 3]) > int(where_to_end_tokens[i + 5]):
-            #             temp = where_to_end_tokens[i + 3]
-            #             where_to_end_tokens[i + 3] = where_to_end_tokens[i + 5]
-            #             where_to_end_tokens[i + 5] = temp
-                        
-            #             pcheck = pcheck + ' is not below equal'
-            #             where_to_end_tokens[i + 2] = 'above equal'
-            #             where_to_end_tokens.insert(i + 5, pcheck)
-                        
-            #             i += 1
-            #         else:
-            #             pcheck = pcheck + ' is not below equal'
-            #             where_to_end_tokens[i + 2] = 'above equal'
-            #             where_to_end_tokens.insert(i + 5, pcheck)
-
-            #             i += 1
-            #     elif (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 1] == 'between' and (where_to_end_tokens[i + 3] == 'and' or where_to_end_tokens[i + 3] == 'or'):
-            #         if int(where_to_end_tokens[i + 2]) > int(where_to_end_tokens[i + 4]):
-            #             temp = where_to_end_tokens[i + 2]
-            #             where_to_end_tokens[i + 2] = where_to_end_tokens[i + 4]
-            #             where_to_end_tokens[i + 4] = temp
-                        
-            #             pcheck = pcheck + ' is below equal'
-            #             where_to_end_tokens[i + 1] = 'above equal'
-            #             where_to_end_tokens.insert(i + 4, pcheck)
-                        
-            #             i += 1
-            #         else:
-            #             pcheck = pcheck + ' is below equal'
-            #             where_to_end_tokens[i + 1] = 'above equal'
-            #             where_to_end_tokens.insert(i + 4, pcheck)
-
-            #             i += 1
-                        
-            #     i += 1
-
-            # pcheck = i = 0
-
-            # while i < len(where_to_end_tokens):
-            #     j = 0
-                
-            #     while j < len(params):
-            #         if where_to_end_tokens[i] == params[j]:
-            #             pcheck = params[j]
-            #             break
-                    
-            #         j += 1
-                
-            #     if where_to_end_tokens[i] == 'not' and where_to_end_tokens[i + 1] == 'between' and (where_to_end_tokens[i + 3] == 'and' or where_to_end_tokens[i + 3] == 'or'):
-            #         if int(where_to_end_tokens[i + 2]) > int(where_to_end_tokens[i + 4]):
-            #             temp = where_to_end_tokens[i + 2]
-            #             where_to_end_tokens[i + 2] = where_to_end_tokens[i + 4]
-            #             where_to_end_tokens[i + 4] = temp
-                        
-            #             pcheck = pcheck + ' is not below equal'
-            #             where_to_end_tokens[i + 1] = 'above equal'
-            #             where_to_end_tokens.insert(i + 4, pcheck)
-                        
-            #             i += 1
-            #         else:
-            #             pcheck = pcheck + ' is not below equal'
-            #             where_to_end_tokens[i + 1] = 'above equal'
-            #             where_to_end_tokens.insert(i + 4, pcheck)
-                        
-            #             i += 1
-            #     elif where_to_end_tokens[i] == 'is' and where_to_end_tokens[i + 1] == 'between' and (where_to_end_tokens[i + 3] == 'and' or where_to_end_tokens[i + 3] == 'or'):
-            #         if int(where_to_end_tokens[i + 2]) > int(where_to_end_tokens[i + 4]):
-            #             temp = where_to_end_tokens[i + 2]
-            #             where_to_end_tokens[i + 2] = where_to_end_tokens[i + 4]
-            #             where_to_end_tokens[i + 4] = temp
-                        
-            #             pcheck = pcheck + ' is below equal'
-            #             where_to_end_tokens[i + 1] = 'above equal'
-            #             where_to_end_tokens.insert(i + 4, pcheck)
-                        
-            #             i += 1
-            #         else:
-            #             pcheck = pcheck + ' is below equal'
-            #             where_to_end_tokens[i + 1] = 'above equal'
-            #             where_to_end_tokens.insert(i + 4, pcheck)
-                        
-            #             i += 1
-                        
-            #     i += 1
-
-            # where_to_end_tokens = list(' '.join(where_to_end_tokens).split(' '))
-
-            # params = ['temperature', 'humidity', 'air', 'soil', 'light']
-            # params2 = ['degree', 'percent', 'ppm', 'lux']
-                
-            # pcheck = dont_pcheck = 0
-
-            # i = len(where_to_end_tokens) - 3
-
-            # while i >= 0:
-            #     if (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 2] == 'of' and where_to_end_tokens[i + 3] == 'the' and (where_to_end_tokens[i + 4] == 'temperature' or where_to_end_tokens[i + 4] == 'humidity' or where_to_end_tokens[i + 4] == 'soil' or where_to_end_tokens[i + 4] == 'light' or where_to_end_tokens[i + 4] == 'air'):
-            #         where_to_end_tokens.insert(i + 1, where_to_end_tokens[i + 4])
-            #         i += 1
-            #     elif (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 2] == 'of' and (where_to_end_tokens[i + 3] == 'temperature' or where_to_end_tokens[i + 3] == 'humidity' or where_to_end_tokens[i + 3] == 'soil' or where_to_end_tokens[i + 3] == 'light' or where_to_end_tokens[i + 3] == 'air'):
-            #         where_to_end_tokens.insert(i + 1, where_to_end_tokens[i + 3])
-            #         i += 1
-                                        
-            #     i -= 1
-
-            # i = len(where_to_end_tokens) - 1
-
-            # while i >= 0:
-            #     if where_to_end_tokens[i] != 'and' and where_to_end_tokens[i] != 'or':
-            #         j = 0
-                    
-                    
-            #         while j < len(params2):
-            #             if where_to_end_tokens[i] == params2[j]:
-            #                 dont_pcheck = 1
-            #                 break
-                        
-            #             j += 1
-                        
-            #         j = 0
-                    
-            #         while j < len(params):
-            #             if where_to_end_tokens[i] == params[j]:
-            #                 pcheck = 1
-            #                 break
-                        
-            #             j += 1
-            #     else:
-            #         if dont_pcheck:
-            #             where_to_end_tokens.insert(i + 1, 'is')
-            #         elif not pcheck:
-            #             pindex = i - 1
-            #             flag = 0
-
-            #             while pindex >= 0:
-            #                 pz = 0
-                            
-            #                 while pz < len(params):
-            #                     if where_to_end_tokens[pindex] == params[pz]:
-            #                         flag = 1
-            #                         where_to_end_tokens.insert(i + 1, params[pz])
-            #                         break
-                                
-            #                     pz += 1
-                            
-            #                 if flag:
-            #                     break
-
-            #                 pindex -= 1
-                    
-            #         pcheck = dont_pcheck = 0
-                                        
-            #     i -= 1
-
-            params = ['temperature', 'humidity', 'air', 'soil', 'light', 'degree', 'percent', 'ppm', 'lux']
+            params = ['temperature', 'humidity', 'air', 'soil', 'light', 'degree', 'percent', 'ppm', 'lux', 'opt_temperature', 'opt_humidity', 'opt_soil', 'opt_light', 'opt_air']
 
             pcheck = i = 0
 
@@ -890,7 +918,7 @@ class CleanText:
 
             where_to_end_tokens = list(' '.join(where_to_end_tokens).split(' '))
 
-            params = ['temperature', 'humidity', 'air', 'soil', 'light']
+            params = ['temperature', 'humidity', 'air', 'soil', 'light', 'opt_temperature', 'opt_humidity', 'opt_soil', 'opt_light', 'opt_air']
             params2 = ['degree', 'percent', 'ppm', 'lux']
                 
             pcheck = dont_pcheck = 0
@@ -898,10 +926,10 @@ class CleanText:
             i = len(where_to_end_tokens) - 3
 
             while i >= 0:
-                if (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 2] == 'of' and where_to_end_tokens[i + 3] == 'the' and (where_to_end_tokens[i + 4] == 'temperature' or where_to_end_tokens[i + 4] == 'humidity' or where_to_end_tokens[i + 4] == 'soil' or where_to_end_tokens[i + 4] == 'light' or where_to_end_tokens[i + 4] == 'air'):
+                if (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 2] == 'of' and where_to_end_tokens[i + 3] == 'the' and (where_to_end_tokens[i + 4] == 'opt_temperature' or where_to_end_tokens[i + 4] == 'opt_humidity' or where_to_end_tokens[i + 4] == 'opt_soil' or where_to_end_tokens[i + 4] == 'opt_light' or where_to_end_tokens[i + 4] == 'opt_air' or where_to_end_tokens[i + 4] == 'temperature' or where_to_end_tokens[i + 4] == 'humidity' or where_to_end_tokens[i + 4] == 'soil' or where_to_end_tokens[i + 4] == 'light' or where_to_end_tokens[i + 4] == 'air'):
                     where_to_end_tokens.insert(i + 1, where_to_end_tokens[i + 4])
                     i += 1
-                elif (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 2] == 'of' and (where_to_end_tokens[i + 3] == 'temperature' or where_to_end_tokens[i + 3] == 'humidity' or where_to_end_tokens[i + 3] == 'soil' or where_to_end_tokens[i + 3] == 'light' or where_to_end_tokens[i + 3] == 'air'):
+                elif (where_to_end_tokens[i] == 'and' or where_to_end_tokens[i] == 'or') and where_to_end_tokens[i + 2] == 'of' and (where_to_end_tokens[i + 3] == 'opt_temperature' or where_to_end_tokens[i + 3] == 'opt_humidity' or where_to_end_tokens[i + 3] == 'opt_soil' or where_to_end_tokens[i + 3] == 'opt_light' or where_to_end_tokens[i + 3] == 'opt_air' or where_to_end_tokens[i + 3] == 'temperature' or where_to_end_tokens[i + 3] == 'humidity' or where_to_end_tokens[i + 3] == 'soil' or where_to_end_tokens[i + 3] == 'light' or where_to_end_tokens[i + 3] == 'air'):
                     where_to_end_tokens.insert(i + 1, where_to_end_tokens[i + 3])
                     i += 1
                                         
@@ -959,8 +987,6 @@ class CleanText:
 
             start_before_where_tokens.extend(where_to_end_tokens)
             tokens = start_before_where_tokens
-
-            print(tokens)
         except:
             pass
 
@@ -1095,7 +1121,7 @@ class CleanText:
             pass
         
         self.tokens2 = tokens.copy()
-
+        
 
         try:
             tokens = tokens[:tokens.index('or')]
@@ -1107,16 +1133,15 @@ class CleanText:
         except:
             None
 
-        i = 0
+        if (not self.isDateFlag):
+            i = 0
+            while i < len(self.tokens2):
+                if 'where' != self.tokens2[i] and 'whose' != self.tokens2[i] and 'that' != self.tokens2[i]:
+                    self.tokens2[i] = ''
+                else:
+                    break
 
-        while i < len(self.tokens2):
-            if 'where' != self.tokens2[i] and 'whose' != self.tokens2[i] and 'that' != self.tokens2[i]:
-                self.tokens2[i] = ''
-            else:
-                break
-
-            i += 1
-
+                i += 1
         i = 0
 
         while i < len(self.tokens2):
@@ -1126,7 +1151,55 @@ class CleanText:
                 break
 
             i += 1
+        
+        if (self.countMonth > 1): 
+            try: 
+                i = len(self.tokens2) - 1
 
+                while i >= 0:
+                    j = 0
+
+                    while j < len(self.month_ls):
+                        if self.tokens2[i] == self.month_ls[j]:
+                            if self.tokens2[i - 1].isnumeric():
+                                self.tokens2.insert(i, "and")
+                                self.tokens2.insert(i + 1, "date")
+                                self.tokens2.insert(i + 2, "is")
+                        j += 1
+                    i -= 1
+            except: 
+                pass
+
+            try: 
+                i = len(self.tokens2) - 1
+
+                while i >= 0:
+                    if self.tokens2[i] == "above" and int(self.tokens2[i - 1]) > 1999:
+                        self.tokens2.insert(i, "and")
+                        self.tokens2.insert(i + 1, "date")
+                        self.tokens2.insert(i + 2, "is")
+                        self.tokens2.insert(i + 3, "not")
+                        break
+                    i -= 1
+            except: 
+                pass
+
+        print(self.tokens2, self.countMonth,self.countMonth,self.countMonth,self.countMonth, "PRE-PROCESS BEFORE LEMMA")
+        
+        try:
+            if (len(saved_date) < 3):
+                saved_date.append(str(datetime.date.today().year))
+
+            for i in range(len(self.tokens2)):
+                if self.tokens2[i] == 'date' and self.tokens2[i + 1] == 'is' and self.tokens2[i + 2] == 'not' and self.tokens2[i + 3] == 'above':
+                    if self.tokens2[i + 4].isnumeric():
+                        del self.tokens2[i + 4]
+                        self.tokens2.append(saved_date[0]) 
+                        self.tokens2.append(saved_date[1]) 
+                        self.tokens2.append(saved_date[2]) 
+        except:
+            pass
+        
         #remove stop words
         custom_stopwords = stopwords.words('english')
         custom_stopwords.remove('above')
@@ -1195,6 +1268,9 @@ class CleanText:
 
         lemmatized_tokens = [x for x in lemmatized_tokens if x != '']
         lemmatized_tokens = [x for x in lemmatized_tokens if x != 'on']
+
+        print("lemmatized tokens")
+        print(lemmatized_tokens)
 
         return lemmatized_tokens
 
