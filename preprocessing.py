@@ -1192,14 +1192,61 @@ class CleanText:
 
             for i in range(len(self.tokens2)):
                 if self.tokens2[i] == 'date' and self.tokens2[i + 1] == 'is' and self.tokens2[i + 2] == 'not' and self.tokens2[i + 3] == 'above':
-                    if self.tokens2[i + 4].isnumeric():
+                    if self.tokens2[i + 4] in self.month_ls and self.tokens2[i + 5].isnumeric():
+                        del self.tokens2[i + 4]
+                        del self.tokens2[i + 5]
+                        self.tokens2.append(saved_date[0]) 
+                        self.tokens2.append(saved_date[1]) 
+                        self.tokens2.append(saved_date[2])
+                    elif self.tokens2[i + 4].isnumeric():
                         del self.tokens2[i + 4]
                         self.tokens2.append(saved_date[0]) 
                         self.tokens2.append(saved_date[1]) 
-                        self.tokens2.append(saved_date[2]) 
+                        self.tokens2.append(saved_date[2])
+                    elif self.tokens2[i + 4] in self.month_ls:
+                        del self.tokens2[i + 4]
+                        self.tokens2.append(saved_date[0]) 
+                        self.tokens2.append(saved_date[1]) 
+                        self.tokens2.append(saved_date[2])
+        except:
+            self.tokens2.append(saved_date[0]) 
+            self.tokens2.append(saved_date[1]) 
+            self.tokens2.append(saved_date[2])
+
+        try:
+            if (len(saved_date) < 3):
+                saved_date.append(str(datetime.date.today().year))
+
+            for i in range(len(self.tokens2)):
+                if self.tokens2[i] == 'december' and self.tokens2[i + 1] == 'december':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'november' and self.tokens2[i + 1] == 'november':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'october' and self.tokens2[i + 1] == 'october':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'september' and self.tokens2[i + 1] == 'september':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'august' and self.tokens2[i + 1] == 'august':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'july' and self.tokens2[i + 1] == 'july':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'june' and self.tokens2[i + 1] == 'june':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'may' and self.tokens2[i + 1] == 'may':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'april' and self.tokens2[i + 1] == 'april':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'march' and self.tokens2[i + 1] == 'march':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'february' and self.tokens2[i + 1] == 'february':
+                    del self.tokens2[i]
+                elif self.tokens2[i] == 'january' and self.tokens2[i + 1] == 'january':
+                    del self.tokens2[i]
         except:
             pass
-        
+            
+        print(saved_date, self.tokens2, "W/ SAVED DATE")
+
         #remove stop words
         custom_stopwords = stopwords.words('english')
         custom_stopwords.remove('above')

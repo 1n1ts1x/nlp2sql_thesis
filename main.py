@@ -15,6 +15,8 @@ from kivy.clock import Clock, mainthread
 from functools import partial
 from text2digits import text2digits
 import re
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 Window.clearcolor = (.9, .9, .9, .9) 
 
@@ -97,14 +99,56 @@ class KVBL(BoxLayout):
                 tts.say('Failed to generate SQL statement voice is unrecognizable')
                 Clock.schedule_once(partial(self.update, 'Failed to generate SQL statement voice is unrecognizable', 0), 0)
                 tts.runAndWait()
-                
+
+    def get_x_months(self, input_query_txt, flag, month_str=''):
+
+        if flag:
+            words  = input_query_txt.split(" ")
+
+            num = [words[idx-1] for idx, word in enumerate(words) if word == "month"]
+
+            today = date.today()
+            d = today - relativedelta(months=int(num[0]))
+
+            first_day = date(d.year, d.month, 1)
+            
+
+            last_day = date(today.year, today.month, 1) - relativedelta(days=1) + relativedelta(months=-(int(num[0]) - 1))
+            
+
+            x_month = "from {} to {}".format(first_day.strftime("%B %d %Y"), last_day.strftime("%B %d %Y"))
+
+            return input_query_txt.replace("{} month ago".format(num[0]), x_month).lower()
+        
+        today = date.today()
+        d = today - relativedelta(months=1)
+
+        first_day = date(d.year, d.month, 1)
+        
+
+        last_day = date(today.year, today.month, 1) - relativedelta(days=1)
+        
+
+        x_month = "from {} to {}".format(first_day.strftime("%B %d %Y"), last_day.strftime("%B %d %Y"))
+
+        return input_query_txt.replace(month_str, x_month).lower()
 
     def on_enter(self):
         input_query_txt = ' '.join(self.input_query.text.split())
         self.ids.output_query_txtinput.text = ''
-
+        
         input_query_txt = input_query_txt.lower()
+        input_query_txt = re.sub(r'\bmonths\b', 'month', input_query_txt)
 
+        if "last month" in input_query_txt:
+            input_query_txt = self.get_x_months(input_query_txt, False, "last month")
+        elif "previous month" in input_query_txt:
+            input_query_txt = self.get_x_months(input_query_txt, False, "previous month")
+        elif "past month" in input_query_txt:
+            input_query_txt = self.get_x_months(input_query_txt, False, "past month")
+        elif "month ago" in input_query_txt:
+            input_query_txt = self.get_x_months(input_query_txt, True)
+        
         if "graph" in input_query_txt or "plot" in input_query_txt or "trace" in input_query_txt :
             self.isGraph = True
         else:
