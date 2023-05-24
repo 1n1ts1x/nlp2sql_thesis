@@ -55,3 +55,53 @@
 
             BoxLayout:
                 orientation: 'horizontal'
+<MainApp>:
+    BoxLayout:
+        orientation: 'vertical'
+
+        Label:
+            text: 'Data Table'
+
+        MDDataTable:
+            rows_num: 5
+            cols_num: 3
+
+            # Header row
+            MDDataTableHeader:
+                text: "Name"
+            MDDataTableHeader:
+                text: "Age"
+            MDDataTableHeader:
+                text: "Gender"
+
+            # Data rows
+            MDDataTableItem:
+                text: "John"
+            MDDataTableItem:
+                text: "25"
+            MDDataTableItem:
+                text: "Male"
+            MDDataTableItem:
+                text: "Lisa"
+            MDDataTableItem:
+                text: "30"
+            MDDataTableItem:
+                text: "Female"
+            MDDataTableItem:
+                text: "Mike"
+            MDDataTableItem:
+                text: "40"
+            MDDataTableItem:
+                text: "Male"
+            MDDataTableItem:
+                text: "Emma"
+            MDDataTableItem:
+                text: "35"
+            MDDataTableItem:
+                text: "Female"
+            MDDataTableItem:
+                text: "Alex"
+            MDDataTableItem:
+                text: "28"
+            MDDataTableItem:
+                text: "Male"

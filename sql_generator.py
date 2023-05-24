@@ -1274,10 +1274,10 @@ class SQLGenerator:
             sql_tts_query = re.sub(r'\bsoil\b', 'Soil_Moisture', sql_tts_query)
             sql_tts_query = re.sub(r'\bair\b', 'Air_Quality', sql_tts_query)
 
-            sql_tts_query = re.sub(r'\btomato_table\b', 'sensor_node_1_tb', sql_tts_query)
-            sql_tts_query = re.sub(r'\bgrape_table\b', 'sensor_node_2_tb', sql_tts_query)
-            sql_tts_query = re.sub(r'\bwheat_table\b', 'sensor_node_3_tb', sql_tts_query)
-            sql_tts_query = re.sub(r'\bcorn_table\b', 'sensor_node_4_tb', sql_tts_query)
+            sql_tts_query = re.sub(r'\btomato_table\b', '`sensor_node_1_tb`', sql_tts_query)
+            sql_tts_query = re.sub(r'\bgrape_table\b', '`sensor_node_2_tb`', sql_tts_query)
+            sql_tts_query = re.sub(r'\bwheat_table\b', '`sensor_node_3_tb`', sql_tts_query)
+            sql_tts_query = re.sub(r'\bcorn_table\b', '`sensor_node_4_tb`', sql_tts_query)
             sql_tts_query = re.sub(r'\bFROM WHERE\b', 'FROM', sql_tts_query)
             sql_tts_query = re.sub(r'\bSELECT WHERE\b', 'SELECT', sql_tts_query)
 
@@ -1300,7 +1300,7 @@ class SQLGenerator:
                 if "WHERE" in sql_tts_query_list:
                     for i in range(len(sql_tts_query_list)):
                         if sql_tts_query_list[i] == 'WHERE':
-                            if sql_tts_query_list[i - 1] != "sensor_node_1_tb" and sql_tts_query_list[i - 1] != "sensor_node_2_tb" and sql_tts_query_list[i - 1] != "sensor_node_3_tb" and sql_tts_query_list[i - 1] != "sensor_node_4_tb" and sql_tts_query_list[i - 1] != "*" and sql_tts_query_list[i - 1] != "dummy":
+                            if sql_tts_query_list[i - 1] != "`sensor_node_1_tb`" and sql_tts_query_list[i - 1] != "`sensor_node_2_tb`" and sql_tts_query_list[i - 1] != "`sensor_node_3_tb`" and sql_tts_query_list[i - 1] != "`sensor_node_4_tb`" and sql_tts_query_list[i - 1] != "*" and sql_tts_query_list[i - 1] != "dummy":
                                 sql_tts_query_list.insert(i - 3, 'WHERE')
                                 break
                     
@@ -1312,26 +1312,26 @@ class SQLGenerator:
 
                 if "WHERE" in sql_tts_query:
                     if "Temperature" in chunk_str:
-                        sql_tts_query_list.append(("AND Temperature >= (SELECT opt_temp_to FROM ideal_parameters) AND Temperature <= (SELECT opt_temp_from FROM ideal_parameters)"))
+                        sql_tts_query_list.append(("AND Temperature >= (SELECT opt_temp_from FROM ideal_parameters) AND Temperature <= (SELECT opt_temp_to FROM ideal_parameters)"))
                     elif "Humidity" in chunk_str:
-                        sql_tts_query_list.append(("AND Humidity >= (SELECT opt_humid_to FROM ideal_parameters) AND Humidity <= (SELECT opt_humid_from FROM ideal_parameters)"))
+                        sql_tts_query_list.append(("AND Humidity >= (SELECT opt_humid_from FROM ideal_parameters) AND Humidity <= (SELECT opt_humid_to FROM ideal_parameters)"))
                     elif "Light_Intensity" in chunk_str:
-                        sql_tts_query_list.append(("AND Light_Intensity >= (SELECT opt_light_to FROM ideal_parameters) AND Light_Intensity <= (SELECT opt_light_from FROM ideal_parameters)"))
+                        sql_tts_query_list.append(("AND Light_Intensity >= (SELECT opt_light_from FROM ideal_parameters) AND Light_Intensity <= (SELECT opt_light_to FROM ideal_parameters)"))
                     elif "Soil_Moisture" in chunk_str:
-                        sql_tts_query_list.append(("AND Soil_Moisture >= (SELECT opt_soil_to FROM ideal_parameters) AND Soil_Moisture <= (SELECT opt_soil_from FROM ideal_parameters)"))
+                        sql_tts_query_list.append(("AND Soil_Moisture >= (SELECT opt_soil_from FROM ideal_parameters) AND Soil_Moisture <= (SELECT opt_soil_to FROM ideal_parameters)"))
                     elif "Air_Quality" in chunk_str:
-                        sql_tts_query_list.append(("AND Air_Quality >= (SELECT opt_air_to FROM ideal_parameters) AND Air_Quality <= (SELECT opt_air_from FROM ideal_parameters)"))
+                        sql_tts_query_list.append(("AND Air_Quality >= (SELECT opt_air_from FROM ideal_parameters) AND Air_Quality <= (SELECT opt_air_to FROM ideal_parameters)"))
                 else:
                     if "Temperature" in chunk_str:
-                        sql_tts_query_list.append(("WHERE Temperature >= (SELECT opt_temp_to FROM ideal_parameters) AND Temperature <= (SELECT opt_temp_from FROM ideal_parameters)"))
+                        sql_tts_query_list.append(("WHERE Temperature >= (SELECT opt_temp_from FROM ideal_parameters) AND Temperature <= (SELECT opt_temp_to FROM ideal_parameters)"))
                     elif "Humidity" in chunk_str:
-                        sql_tts_query_list.append(("WHERE Humidity >= (SELECT opt_humid_to FROM ideal_parameters) AND Humidity <= (SELECT opt_humid_from FROM ideal_parameters)"))
+                        sql_tts_query_list.append(("WHERE Humidity >= (SELECT opt_humid_from FROM ideal_parameters) AND Humidity <= (SELECT opt_humid_to FROM ideal_parameters)"))
                     elif "Light_Intensity" in chunk_str:
-                        sql_tts_query_list.append(("WHERE Light_Intensity >= (SELECT opt_light_to FROM ideal_parameters) AND Light_Intensity <= (SELECT opt_light_from FROM ideal_parameters)"))
+                        sql_tts_query_list.append(("WHERE Light_Intensity >= (SELECT opt_light_from FROM ideal_parameters) AND Light_Intensity <= (SELECT opt_light_to FROM ideal_parameters)"))
                     elif "Soil_Moisture" in chunk_str:
-                        sql_tts_query_list.append(("WHERE Soil_Moisture >= (SELECT opt_soil_to FROM ideal_parameters) AND Soil_Moisture <= (SELECT opt_soil_from FROM ideal_parameters)"))
+                        sql_tts_query_list.append(("WHERE Soil_Moisture >= (SELECT opt_soil_from FROM ideal_parameters) AND Soil_Moisture <= (SELECT opt_soil_to FROM ideal_parameters)"))
                     elif "Air_Quality" in chunk_str:
-                        sql_tts_query_list.append(("WHERE Air_Quality >= (SELECT opt_air_to FROM ideal_parameters) AND Air_Quality <= (SELECT opt_air_from FROM ideal_parameters)"))
+                        sql_tts_query_list.append(("WHERE Air_Quality >= (SELECT opt_air_from FROM ideal_parameters) AND Air_Quality <= (SELECT opt_air_to FROM ideal_parameters)"))
 
                 sql_tts_query_str = ' '.join(sql_tts_query_list)             
 

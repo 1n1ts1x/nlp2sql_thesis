@@ -7,9 +7,15 @@ class ReplaceSubstring:
     def replace_sub_str(self):
         input_query_txt = self.txt
 
-        # input_query_txt = re.sub(r'\ba week ago\b', 'lastweek', input_query_txt)
-        # input_query_txt = re.sub(r'\bone week ago\b', 'lastweek', input_query_txt)
-        # input_query_txt = re.sub(r'\blast week\b', 'lastweek', input_query_txt)
+        input_query_txt = re.sub(r'\bcurrent\b', 'today', input_query_txt)
+        input_query_txt = re.sub(r'\bcurrently\b', 'today', input_query_txt)
+        input_query_txt = re.sub(r'\bnow\b', 'today', input_query_txt)
+
+        input_query_txt = re.sub(r'\btomato\b', 'tomato farm', input_query_txt)
+        input_query_txt = re.sub(r'\bgrape\b', 'grape farm', input_query_txt)
+        input_query_txt = re.sub(r'\bcorn\b', 'corn farm', input_query_txt)
+        input_query_txt = re.sub(r'\bwheat\b', 'wheat farm', input_query_txt)
+
         input_query_txt = re.sub(r'\bcrops of tomato\b', 'tomato plant', input_query_txt)
         input_query_txt = re.sub(r'\bcrop of tomato\b', 'tomato plant', input_query_txt)
         input_query_txt = re.sub(r'\bcrops of grape\b', 'grape plant', input_query_txt)
@@ -18,6 +24,91 @@ class ReplaceSubstring:
         input_query_txt = re.sub(r'\bcrop of wheat\b', 'wheat plant', input_query_txt)
         input_query_txt = re.sub(r'\bcrops of corn\b', 'corn plant', input_query_txt)
         input_query_txt = re.sub(r'\bcrop of corn\b', 'corn plant', input_query_txt)
+
+        input_query_txt = re.sub(r'\bis the\b', 'show all from', input_query_txt)
+        input_query_txt = re.sub(r'\bhas the\b', 'show all from', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes the\b', 'show all from', input_query_txt)
+        input_query_txt = re.sub(r'\bwas the\b', 'show all from', input_query_txt)
+
+        input_query_txt = re.sub(r'\bis tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bis tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bis tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bis tomato\b', 'show all from tomato', input_query_txt)
+
+        input_query_txt = re.sub(r'\bis grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bis grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bis grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bis grape\b', 'show all from grape', input_query_txt)
+        
+        input_query_txt = re.sub(r'\bis corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bis corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bis corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bis corn\b', 'show all from corn', input_query_txt)
+
+        input_query_txt = re.sub(r'\bis wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bis wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bis wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bis wheat\b', 'show all from wheat', input_query_txt)
+
+        input_query_txt = re.sub(r'\bhas tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bhas tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bhas tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bhas tomato\b', 'show all from tomato', input_query_txt)
+
+        input_query_txt = re.sub(r'\bhas corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bhas corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bhas corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bhas corn\b', 'show all from corn', input_query_txt)
+
+        input_query_txt = re.sub(r'\bhas wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bhas wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bhas wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bhas wheat\b', 'show all from wheat', input_query_txt)
+
+        input_query_txt = re.sub(r'\bhas grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bhas grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bhas grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bhas grape\b', 'show all from grape', input_query_txt)
+
+        input_query_txt = re.sub(r'\bdoes corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes corn\b', 'show all from corn', input_query_txt)
+
+        input_query_txt = re.sub(r'\bdoes grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes grape\b', 'show all from grape', input_query_txt)
+
+        input_query_txt = re.sub(r'\bdoes wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes wheat\b', 'show all from wheat', input_query_txt)
+
+        input_query_txt = re.sub(r'\bdoes tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bdoes tomato\b', 'show all from tomato', input_query_txt)
+
+        input_query_txt = re.sub(r'\bwas wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bwas wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bwas wheat\b', 'show all from wheat', input_query_txt)
+        input_query_txt = re.sub(r'\bwas wheat\b', 'show all from wheat', input_query_txt)
+
+        input_query_txt = re.sub(r'\bwas tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bwas tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bwas tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bwas tomato\b', 'show all from tomato', input_query_txt)
+
+        input_query_txt = re.sub(r'\bwas grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bwas grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bwas grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bwas grape\b', 'show all from grape', input_query_txt)
+
+        input_query_txt = re.sub(r'\bwas corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bwas corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bwas corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bwas corn\b', 'show all from corn', input_query_txt)
 
         input_query_txt = re.sub(r'\bgraph of\b', 'graph', input_query_txt)
         input_query_txt = re.sub(r'\ball the farms\b', ' all plants', input_query_txt)
