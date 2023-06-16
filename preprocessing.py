@@ -1209,9 +1209,12 @@ class CleanText:
                         self.tokens2.append(saved_date[1]) 
                         self.tokens2.append(saved_date[2])
         except:
-            self.tokens2.append(saved_date[0]) 
-            self.tokens2.append(saved_date[1]) 
-            self.tokens2.append(saved_date[2])
+            try:
+                self.tokens2.append(saved_date[0]) 
+                self.tokens2.append(saved_date[1]) 
+                self.tokens2.append(saved_date[2])
+            except:
+                pass
 
         try:
             if (len(saved_date) < 3):

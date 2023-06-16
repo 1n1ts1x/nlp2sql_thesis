@@ -54,7 +54,7 @@ class SQL:
                 elif cur.rowcount < 2:
                     return f"There is {cur.rowcount} record showing this plant does {'not' if self.isGoodOrBadConditionDate else ''} have optimal conditions.\n\nHere is the list:\n" + result
                 else:
-                    return f"There are {cur.rowcount} records showing this plant does {'not' if self.isGoodOrBadConditionDate else ''}  have optimal conditions.\n\nHere is the list:\n" + result
+                    return f"There are {cur.rowcount} records showing this plant does {'not' if self.isGoodOrBadConditionDate else ''} have optimal conditions.\n\nHere is the list:\n" + result
             elif self.isGoodCondition:
                 records_list = []
                 for row in records:
