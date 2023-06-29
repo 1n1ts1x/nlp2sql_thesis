@@ -450,5 +450,13 @@ class ReplaceSubstring:
         input_query_txt = re.sub(r'\bdata of all\b', ' all', input_query_txt)
         input_query_txt = re.sub(r'\bdata of\b', '', input_query_txt)
         input_query_txt = re.sub(r'\bdata data\b', '', input_query_txt)
+        input_query_txt = re.sub(r'\bdays\b', 'day', input_query_txt)
+        input_query_txt = re.sub(r'\bweeks\b', 'week', input_query_txt)
+        input_query_txt = re.sub(r'\bmonths\b', 'month', input_query_txt)
+        input_query_txt = re.sub(r'\byears\b', 'year', input_query_txt)
+
+        # input_query_txt = re.sub(r'\bequals\b', '', input_query_txt)
+        # input_query_txt = re.sub(r'\bequal\b', '', input_query_txt)
+        # input_query_txt = re.sub(r'\bequivalent\b', '', input_query_txt)
 
         return input_query_txt

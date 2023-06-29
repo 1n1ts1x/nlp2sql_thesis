@@ -23,6 +23,7 @@ from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.screen import MDScreen
 import datetime
 from kivy.metrics import dp
+from word2number import w2n
 
 
 Window.clearcolor = (.9, .9, .9, .9) 
@@ -46,7 +47,8 @@ class KVBL(BoxLayout):
         self.isGoodOrBadConditionDate = False
         self.isAverage = False
         self.tempQuery = ''
-
+        field_value = FieldValue(_key=[], _value=[[], []])
+        self.create_data_table(field_value)
     @mainthread 
     def update(self, q, f, *largs):
         if not f:
@@ -189,11 +191,40 @@ class KVBL(BoxLayout):
 
         return input_query_txt.replace(year_str, x_year).lower()
     
+    def convert_string_to_ago_format(self, text):
+        patterns = [
+            (r'past (\d+) day', r'past \1 day ago'),
+            (r'past (\d+) week', r'past \1 week ago'),
+            (r'past (\d+) month', r'past \1 month ago'),
+            (r'past (\d+) year', r'past \1 year ago'),
+        ]
+        for pattern, replacement in patterns:
+            text = re.sub(pattern, replacement, text)
+
+        return text
+
+    def replace_worded_numbers(self, input_string):
+        words = input_string.split()
+        converted_words = []
+
+        for word in words:
+            try:
+                number = w2n.word_to_num(word)
+                converted_words.append(str(number))
+            except ValueError:
+                converted_words.append(word)
+
+        converted_string = ' '.join(converted_words)
+        return converted_string
+        
     def on_enter(self):
         input_query_txt = ' '.join(self.input_query.text.split())
         self.ids.output_query_txtinput.text = ''
         
+        input_query_txt = self.replace_worded_numbers(input_query_txt)
+
         input_query_txt = input_query_txt.lower()
+        input_query_txt = re.sub(r'\bdays\b', 'day', input_query_txt)
         input_query_txt = re.sub(r'\bweeks\b', 'week', input_query_txt)
         input_query_txt = re.sub(r'\bmonths\b', 'month', input_query_txt)
         input_query_txt = re.sub(r'\byears\b', 'year', input_query_txt)
@@ -242,6 +273,8 @@ class KVBL(BoxLayout):
             input_query_txt = self.get_x_weeks(input_query_txt, False, "past week", datetime.date(int(datetime.date.today().year), int(datetime.date.today().month), int(datetime.date.today().day)))
         elif "week ago" in input_query_txt:
             input_query_txt = self.get_x_weeks(input_query_txt, True, "", datetime.date(int(datetime.date.today().year), int(datetime.date.today().month), int(datetime.date.today().day)))
+
+        input_query_txt = self.convert_string_to_ago_format(input_query_txt)
 
         if "last month" in input_query_txt:
             input_query_txt = self.get_x_months(input_query_txt, False, "last month")
@@ -397,6 +430,8 @@ class KVBL(BoxLayout):
             sql.execute_query(sql_query)
 
         self.isGraphSql = False
+        
+        self.create_data_table(sql.pair)
 
         if 'SELECT' in sql_query:
             try:
@@ -507,29 +542,40 @@ class KVBL(BoxLayout):
 
         threading.Thread(target=self.thread_run_tts, args=(sql_query_word,), daemon=True).start()
 
-    def create_data_table(self):
-        data = [
-            ['80', '20', '11', '41'],
-            ['14', '16', '33', '41'],
-            ['44', '12', '44', '41']
-        ]
-        headers = [
-            ("Humidity"),
-            ("Air"),
-            ("Light"),
-            ("Soil"),
-        ]
+    def create_data_table(self, pair=[]):
+        data = [[''],['']]
+        headers = ['']  
+
+        isData = False
+
+        try:
+            if getattr(pair, '_key') and getattr(pair, '_value'):
+                data = pair._value
+                headers = pair._key
+                isData = True
+        except:
+            pass
+
+        print(pair)
+
+
+        if len(headers) == 1:
+            headers = [headers[0], '']
+            for sublist in data:
+                sublist.append('')
+            
+
         rows = [[str(value) for value in row] for row in data]  
 
         table = MDDataTable(
-            # pos_hint={'center_x': 0.5, 'center_y': 1},
-            size_hint=(1, 1.3),
-            column_data=[(header, dp(30)) for header in headers],
-            row_data=rows,
-            rows_num = 10,
-            use_pagination =True,
-            check = False  
+            size_hint =( 1, 0.9),
+            column_data = [(header, dp(177)) for header in headers],
+            row_data = rows,
+            rows_num = len(data),
+            use_pagination = True if isData else False,
+            check = False,
         )
+    
 
         self.ids.data_table_box.clear_widgets()  
         self.ids.data_table_box.add_widget(table)  
@@ -538,7 +584,8 @@ class KVBL(BoxLayout):
 class MainApp(MDApp):    
     def build(self):
         kvbl = KVBL()
-        kvbl.create_data_table()
+        # kvbl.create_data_table()
+        Window.size = (1000, 900)
         return kvbl
 
 if __name__ == '__main__':

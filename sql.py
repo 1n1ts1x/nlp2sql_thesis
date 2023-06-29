@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
-
 import matplotlib.pyplot as plt
+from data_model import *
 
 class SQL:
     def __init__(self, isGraphSql=False, isGoodCondition=False, isGoodConditionDate=False, isGoodOrBadConditionDate=False):
@@ -10,12 +10,18 @@ class SQL:
         self.isGoodConditionDate = isGoodConditionDate
         self.isGoodOrBadConditionDate = isGoodOrBadConditionDate
         self.text = ''
+        self.trec = TableRecord()
+        self.col_name = []
+        self.col_val = []
+        self.pair = []
 
     def execute_query(self, query):
+
         try:
             con = mysql.connector.connect(host='localhost', database='plant', username='root', password='')
             cur = con.cursor()
             cur.execute(query)
+            column_names = [desc[0] for desc in cur.description]
             records = cur.fetchall()
             print("Record count: ", cur.rowcount)
             
@@ -94,10 +100,23 @@ class SQL:
                     self.text = f"No, {self.text} did not meet the ideal condition."
                     
                 return self.text
-            else:
-                for row in records:
-                    print(row)
-  
+            
+            # else:
+            for row in records:
+                for column, value in zip(column_names, row):
+                    print(column, value)
+                    self.trec[column] = value
+
+            for key, value in self.trec.data.items():
+                self.col_name.append(key)
+                self.col_val.append(value)
+
+
+            mod_list = list(zip(*self.col_val))
+            res_list = [list(mod) for mod in mod_list]
+
+            self.pair = FieldValue(_key=self.col_name, _value=res_list)
+
         except Error as error:
             print("Error in the program {}".format(error))
         finally:

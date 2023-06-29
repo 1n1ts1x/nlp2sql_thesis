@@ -20,7 +20,7 @@
             orientation: 'vertical'
 
             Label:
-                text: 'English language query:'
+                text: 'English to SQL Translator'
 
             TextInput:
                 id: input_query
@@ -44,22 +44,22 @@
         BoxLayout:
             orientation: 'vertical'
 
-            Label:
-                text: 'Generated SQL query:'
+            # Label:
+            #     text: 'Generated SQL query:'
 
             TextInput:
                 id: output_query_txtinput
                 background_color: (0, 0, 0, 1)
                 multiline: True
                 readonly: True
-                size_hint: (1, 2)
+                size_hint: (1, 6)
 
             BoxLayout:
                 orientation: 'horizontal'
         
-    ScrollView:
-        size_hint: (1, 1)
-        do_scroll_x: False
+    # ScrollView:
+    #     size_hint: (1, 1)
+    #     do_scroll_x: False
 
         BoxLayout:
             orientation: 'vertical'

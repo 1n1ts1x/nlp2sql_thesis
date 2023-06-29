@@ -794,7 +794,37 @@ class CleanText:
         tokens = tokenizer.tokenize(lowercase_query)
 
         print('BEFORE: tokens = self.arrange_tokens(tokens, cmd_list)')    
-        print(tokens)
+        # print(tokens)
+
+        try:
+            table_index = tokens.index('table')
+
+            found_word = next((word for word in tokens[:table_index] if word in ['humidity', 'soil', 'temperature', 'air', 'light', 'date']), None)
+
+            if found_word:
+                numeric_index = None
+                for i in range(table_index + 1, len(tokens)):
+                    if tokens[i].isdigit():
+                        numeric_index = i
+                        break
+
+                if numeric_index is not None:
+                    sublist = tokens[table_index + 1:numeric_index]
+                else:
+                    sublist = tokens[table_index + 1:]
+
+                if not any(word in sublist for word in ['humidity', 'soil', 'temperature', 'air', 'light', 'date']):
+                    if 'that' in tokens:
+                        tokens.remove('that')
+                    elif 'when' in tokens:
+                        tokens.remove('when')
+
+                    if found_word:
+                        tokens.insert(table_index + 1, found_word)
+
+                    print("Updated word list:", tokens)
+        except:
+            pass
 
         saved_date = []
 
@@ -1318,6 +1348,17 @@ class CleanText:
 
         lemmatized_tokens = [x for x in lemmatized_tokens if x != '']
         lemmatized_tokens = [x for x in lemmatized_tokens if x != 'on']
+
+
+        try:
+            i = 0
+            while i < len(lemmatized_tokens) - 1:
+                if lemmatized_tokens[i] == 'is' and lemmatized_tokens[i + 1] == 'table':
+                    del lemmatized_tokens[i:i + 2]
+                else:
+                    i += 1
+        except:
+            pass
 
         print("lemmatized tokens")
         print(lemmatized_tokens)
