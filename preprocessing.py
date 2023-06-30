@@ -841,7 +841,7 @@ class CleanText:
         
         saved_date = []
 
-                try:
+        try:
             for i in range(len(tokens)):
                 if tokens[i] == 'date' and tokens[i + 1] == 'is' and tokens[i + 2] == 'not' and tokens[i + 3] == 'above':
                     saved_date.append(tokens[i + 4])
