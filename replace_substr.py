@@ -4,12 +4,26 @@ class ReplaceSubstring:
     def __init__(self, txt=''):
         self.txt = txt
 
+    def check_string(self, string):
+        pattern = r'below equal|above equal'  
+
+        if re.search(pattern, string):
+            return string
+        else:
+            return re.sub(r'\bequal\b', 'is', string)
+        
     def replace_sub_str(self):
         input_query_txt = self.txt
+        input_query_txt = re.sub(r'\bfarms\b', 'farm', input_query_txt)
 
         input_query_txt = re.sub(r'\bcurrent\b', 'today', input_query_txt)
         input_query_txt = re.sub(r'\bcurrently\b', 'today', input_query_txt)
         input_query_txt = re.sub(r'\bnow\b', 'today', input_query_txt)
+        input_query_txt = re.sub(r'\btoday light\b', 'light today', input_query_txt)
+        input_query_txt = re.sub(r'\btoday air\b', 'air today', input_query_txt)
+        input_query_txt = re.sub(r'\btoday soil\b', 'soil today', input_query_txt)
+        input_query_txt = re.sub(r'\btoday humidity\b', 'humidity today', input_query_txt)
+        input_query_txt = re.sub(r'\btoday temperature\b', 'temperature today', input_query_txt)
 
         input_query_txt = re.sub(r'\btomato\b', 'tomato farm', input_query_txt)
         input_query_txt = re.sub(r'\bgrape\b', 'grape farm', input_query_txt)
@@ -280,6 +294,7 @@ class ReplaceSubstring:
         input_query_txt = re.sub(r'\bview\b', 'show', input_query_txt)
         input_query_txt = re.sub(r'\bshow me\b', 'show', input_query_txt)
         input_query_txt = re.sub(r'\bpresent\b', 'show', input_query_txt)
+        input_query_txt = re.sub(r'\boutput\b', 'show', input_query_txt)
         input_query_txt = re.sub(r'\bexhibit\b', 'show', input_query_txt)
         input_query_txt = re.sub(r'\bshow data\b', ' show all', input_query_txt)
         input_query_txt = re.sub(r'\bshow data\b', ' show all', input_query_txt)
@@ -316,6 +331,9 @@ class ReplaceSubstring:
         input_query_txt = input_query_txt.replace('ranges from', ' between')
         input_query_txt = input_query_txt.replace('through', ' between')
         input_query_txt = input_query_txt.replace('within', ' between')
+        input_query_txt = input_query_txt.replace('exactly', ' equal')
+        input_query_txt = input_query_txt.replace('equals', ' equal')
+        input_query_txt = input_query_txt.replace('equivalent', ' equal')
         input_query_txt = input_query_txt.replace('greater than or equal', ' above equal')
         input_query_txt = input_query_txt.replace('larger than or equal', ' above equal')
         input_query_txt = input_query_txt.replace('bigger than or equal', ' above equal')
@@ -390,6 +408,7 @@ class ReplaceSubstring:
         input_query_txt = input_query_txt.replace('that', ' where')
         input_query_txt = input_query_txt.replace('whose', ' where')
         input_query_txt = input_query_txt.replace('if', ' where')
+        input_query_txt = input_query_txt.replace('with', ' where is')
         input_query_txt = input_query_txt.replace('provided', ' where')
         input_query_txt = input_query_txt.replace('assuming', ' where')
         input_query_txt = input_query_txt.replace('supposing', ' where')
@@ -455,8 +474,16 @@ class ReplaceSubstring:
         input_query_txt = re.sub(r'\bmonths\b', 'month', input_query_txt)
         input_query_txt = re.sub(r'\byears\b', 'year', input_query_txt)
 
-        # input_query_txt = re.sub(r'\bequals\b', '', input_query_txt)
-        # input_query_txt = re.sub(r'\bequal\b', '', input_query_txt)
-        # input_query_txt = re.sub(r'\bequivalent\b', '', input_query_txt)
+        input_query_txt = re.sub(r'\btemperatures\b', 'temperature', input_query_txt)
+        input_query_txt = re.sub(r'\bsoil moistures\b', 'soil', input_query_txt)
+        input_query_txt = re.sub(r'\bsoils\b', 'soil', input_query_txt)
+        input_query_txt = re.sub(r'\bhumidities\b', 'humidity', input_query_txt)
+        input_query_txt = re.sub(r'\blight intensities\b', 'light', input_query_txt)
+        input_query_txt = re.sub(r'\blights\b', 'light', input_query_txt)
+        input_query_txt = re.sub(r'\bair qualities\b', 'air', input_query_txt)
+        input_query_txt = re.sub(r'\bairs\b', 'air', input_query_txt)
+        input_query_txt = re.sub(r'\bdates\b', 'date', input_query_txt)
+
+        input_query_txt = self.check_string(input_query_txt)
 
         return input_query_txt

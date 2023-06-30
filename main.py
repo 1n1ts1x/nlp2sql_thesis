@@ -24,7 +24,7 @@ from kivymd.uix.screen import MDScreen
 import datetime
 from kivy.metrics import dp
 from word2number import w2n
-
+from kivy.utils import platform
 
 Window.clearcolor = (.9, .9, .9, .9) 
 
@@ -220,10 +220,21 @@ class KVBL(BoxLayout):
     def on_enter(self):
         input_query_txt = ' '.join(self.input_query.text.split())
         self.ids.output_query_txtinput.text = ''
-        
+
         input_query_txt = self.replace_worded_numbers(input_query_txt)
 
         input_query_txt = input_query_txt.lower()
+
+        input_query_txt = re.sub(r'\btomatoes\b', 'tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bgrapes\b', 'grape', input_query_txt)
+        input_query_txt = re.sub(r'\bcorns\b', 'corn', input_query_txt)
+        input_query_txt = re.sub(r'\bwheats\b', 'wheat', input_query_txt)
+
+        input_query_txt = re.sub(r'\bshow tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bshow grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bshow corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bshow wheat\b', 'show all from wheat', input_query_txt)
+
         input_query_txt = re.sub(r'\bdays\b', 'day', input_query_txt)
         input_query_txt = re.sub(r'\bweeks\b', 'week', input_query_txt)
         input_query_txt = re.sub(r'\bmonths\b', 'month', input_query_txt)
@@ -569,13 +580,12 @@ class KVBL(BoxLayout):
 
         table = MDDataTable(
             size_hint =( 1, 0.9),
-            column_data = [(header, dp(177)) for header in headers],
+            column_data = [(header, dp(85)) for header in headers],
             row_data = rows,
             rows_num = len(data),
             use_pagination = True if isData else False,
             check = False,
         )
-    
 
         self.ids.data_table_box.clear_widgets()  
         self.ids.data_table_box.add_widget(table)  
@@ -583,10 +593,58 @@ class KVBL(BoxLayout):
 
 class MainApp(MDApp):    
     def build(self):
-        kvbl = KVBL()
-        # kvbl.create_data_table()
         Window.size = (1000, 900)
-        return kvbl
+        self.center_window() 
+        return KVBL()
+
+    def center_window(self):
+        if platform == 'win':
+            self.center_window_windows()
+        elif platform == 'linux':
+            self.center_window_linux()
+        elif platform == 'macosx':
+            self.center_window_macos()
+
+    def center_window_windows(self):
+        from ctypes import windll
+
+        user32 = windll.user32
+        screen_width = user32.GetSystemMetrics(0)
+        screen_height = user32.GetSystemMetrics(1)
+        window_width, window_height = Window.size
+
+        left = (screen_width - window_width) // 2
+        top = (screen_height - window_height) // 2
+
+        Window.left = left
+        Window.top = top
+
+
+    def center_window_linux(self):
+        from gi.repository import Gdk
+
+        screen = Gdk.Screen.get_default()
+        screen_width = screen.get_width()
+        screen_height = screen.get_height()
+        window_width, window_height = Window.size
+
+        left = (screen_width - window_width) // 2
+        top = (screen_height - window_height) // 2
+
+        Window.position = (left, top)
+
+    def center_window_macos(self):
+        from AppKit import NSScreen
+
+        screen_frame = NSScreen.mainScreen().frame()
+        screen_width = int(screen_frame.size.width)
+        screen_height = int(screen_frame.size.height)
+        window_width, window_height = Window.size
+
+        left = (screen_width - window_width) // 2
+        top = (screen_height - window_height) // 2
+
+        Window.position = (left, top)
 
 if __name__ == '__main__':
     MainApp().run()

@@ -795,11 +795,12 @@ class CleanText:
 
         print('BEFORE: tokens = self.arrange_tokens(tokens, cmd_list)')    
         # print(tokens)
+        keywords = ['humidity', 'soil', 'temperature', 'air', 'light', 'date']
 
         try:
             table_index = tokens.index('table')
 
-            found_word = next((word for word in tokens[:table_index] if word in ['humidity', 'soil', 'temperature', 'air', 'light', 'date']), None)
+            found_word = next((word for word in tokens[:table_index] if word in keywords), None)
 
             if found_word:
                 numeric_index = None
@@ -813,7 +814,7 @@ class CleanText:
                 else:
                     sublist = tokens[table_index + 1:]
 
-                if not any(word in sublist for word in ['humidity', 'soil', 'temperature', 'air', 'light', 'date']):
+                if not any(word in sublist for word in keywords):
                     if 'that' in tokens:
                         tokens.remove('that')
                     elif 'when' in tokens:
@@ -822,18 +823,28 @@ class CleanText:
                     if found_word:
                         tokens.insert(table_index + 1, found_word)
 
-                    print("Updated word list:", tokens)
+                    print("Updated tokens:", tokens)
+        except:
+            pass
+        
+        try:
+            index = tokens.index("table")
+            if index > 0 and tokens[index - 1] in keywords:
+                del tokens[index]
         except:
             pass
 
+        print("Updated tokens after table discard:", tokens)
+        
         saved_date = []
 
         try:
-            for i in range(len(tokens)):
-                if tokens[i] == 'date' and tokens[i + 1] == 'is' and tokens[i + 2] == 'not' and tokens[i + 3] == 'above':
-                    saved_date.append(tokens[i + 4])
-                    saved_date.append(tokens[i + 5])
-                    saved_date.append(tokens[i + 6])
+            i = 0
+            while i < len(tokens):
+                if tokens[i] == "table" and i > 0 and tokens[i - 1] in keywords:
+                    del tokens[i]
+                    break
+                i += 1
         except:
             pass
 
@@ -1355,8 +1366,9 @@ class CleanText:
             while i < len(lemmatized_tokens) - 1:
                 if lemmatized_tokens[i] == 'is' and lemmatized_tokens[i + 1] == 'table':
                     del lemmatized_tokens[i:i + 2]
-                else:
-                    i += 1
+                elif lemmatized_tokens[i] == 'show' and lemmatized_tokens[i + 1] == 'table':
+                    del lemmatized_tokens[i:i + 2]
+                i += 1
         except:
             pass
 

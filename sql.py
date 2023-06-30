@@ -29,13 +29,16 @@ class SQL:
                 y = []
                 dates = []
 
-                for row in records:
-                    dates.append(row[0])
-                    y.append(row[1])
+                try:
+                    for row in records:
+                        dates.append(row[0])
+                        y.append(row[1])
 
-                plt.plot_date(dates, y, 'g')
-                plt.xticks(rotation=70)
-                plt.show()
+                    plt.plot_date(dates, y, 'g')
+                    plt.xticks(rotation=70)
+                    plt.show()
+                except:
+                    pass
             elif self.isGoodConditionDate:
                 records_list = []
                 for row in records:
