@@ -828,23 +828,25 @@ class CleanText:
             pass
         
         try:
-            index = tokens.index("table")
-            if index > 0 and tokens[index - 1] in keywords:
-                del tokens[index]
-        except:
-            pass
-
-        print("Updated tokens after table discard:", tokens)
-        
-        saved_date = []
-
-        try:
             i = 0
             while i < len(tokens):
                 if tokens[i] == "table" and i > 0 and tokens[i - 1] in keywords:
                     del tokens[i]
                     break
                 i += 1
+        except:
+            pass
+        
+        print("Updated tokens after table discard:", tokens)
+        
+        saved_date = []
+
+                try:
+            for i in range(len(tokens)):
+                if tokens[i] == 'date' and tokens[i + 1] == 'is' and tokens[i + 2] == 'not' and tokens[i + 3] == 'above':
+                    saved_date.append(tokens[i + 4])
+                    saved_date.append(tokens[i + 5])
+                    saved_date.append(tokens[i + 6])
         except:
             pass
 
