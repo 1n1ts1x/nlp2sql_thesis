@@ -130,7 +130,12 @@ class KVBL(BoxLayout):
             num = [words[idx-1] for idx, word in enumerate(words) if word == "week"]
 
             start_date = date + datetime.timedelta(-date.weekday(), weeks=-int(num[0]))
-            end_date = date + datetime.timedelta(-date.weekday() - (1 + (int(num[0]) - 1) * 7))
+
+            if '@' in input_query_txt:
+                end_date = date + datetime.timedelta(-date.weekday() - 1)
+            else:
+                end_date = date + datetime.timedelta(-date.weekday() - (1 + (int(num[0]) - 1) * 7))
+                
             x_week = "from {} to {}".format(start_date.strftime("%B %d %Y"), end_date.strftime("%B %d %Y"))
                 
             return input_query_txt.replace("{} week ago".format(num[0]), x_week).lower()
@@ -154,7 +159,10 @@ class KVBL(BoxLayout):
             first_day = date(d.year, d.month, 1)
             
 
-            last_day = date(today.year, today.month, 1) - relativedelta(days=1) + relativedelta(months=-(int(num[0]) - 1))
+            if '@' in input_query_txt:
+                last_day = date(today.year, today.month, 1) - relativedelta(days=1)
+            else:
+                last_day = date(today.year, today.month, 1) - relativedelta(days=1) + relativedelta(months=-(int(num[0]) - 1))
             
 
             x_month = "from {} to {}".format(first_day.strftime("%B %d %Y"), last_day.strftime("%B %d %Y"))
@@ -182,7 +190,11 @@ class KVBL(BoxLayout):
 
             num = [words[idx-1] for idx, word in enumerate(words) if word == "year"]
             
-            x_year = "from {} to {}".format("january 1 {}".format(int(datetime.date.today().year) - int(num[0])), "december 31 {}".format(int(datetime.date.today().year) - int(num[0])))
+            if '@' in input_query_txt:
+                x_year = "from {} to {}".format("january 1 {}".format(int(datetime.date.today().year) - int(num[0])), "december 31 {}".format(int(datetime.date.today().year) - 1))
+            else:
+                x_year = "from {} to {}".format("january 1 {}".format(int(datetime.date.today().year) - int(num[0])), "december 31 {}".format(int(datetime.date.today().year) - int(num[0])))
+            
 
             return input_query_txt.replace("{} year ago".format(num[0]), x_year).lower()
         
@@ -193,10 +205,10 @@ class KVBL(BoxLayout):
     
     def convert_string_to_ago_format(self, text):
         patterns = [
-            (r'past (\d+) day', r'past \1 day ago'),
-            (r'past (\d+) week', r'past \1 week ago'),
-            (r'past (\d+) month', r'past \1 month ago'),
-            (r'past (\d+) year', r'past \1 year ago'),
+            (r'past (\d+) day', r'past \1 day ago @'),
+            (r'past (\d+) week', r'past \1 week ago @'),
+            (r'past (\d+) month', r'past \1 month ago @'),
+            (r'past (\d+) year', r'past \1 year ago @'),
         ]
         for pattern, replacement in patterns:
             text = re.sub(pattern, replacement, text)
@@ -276,6 +288,8 @@ class KVBL(BoxLayout):
         else:
             self.isAverage = False
 
+        input_query_txt = self.convert_string_to_ago_format(input_query_txt)
+
         if "last week" in input_query_txt:
             input_query_txt = self.get_x_weeks(input_query_txt, False, "last week", datetime.date(int(datetime.date.today().year), int(datetime.date.today().month), int(datetime.date.today().day)))
         elif "previous week" in input_query_txt:
@@ -284,8 +298,6 @@ class KVBL(BoxLayout):
             input_query_txt = self.get_x_weeks(input_query_txt, False, "past week", datetime.date(int(datetime.date.today().year), int(datetime.date.today().month), int(datetime.date.today().day)))
         elif "week ago" in input_query_txt:
             input_query_txt = self.get_x_weeks(input_query_txt, True, "", datetime.date(int(datetime.date.today().year), int(datetime.date.today().month), int(datetime.date.today().day)))
-
-        input_query_txt = self.convert_string_to_ago_format(input_query_txt)
 
         if "last month" in input_query_txt:
             input_query_txt = self.get_x_months(input_query_txt, False, "last month")
@@ -430,6 +442,22 @@ class KVBL(BoxLayout):
             pass
         
         print(sql_query, "sql_query")
+
+        if "FROM *" in sql_query:
+            from_index = sql_query.index('FROM *')
+
+            before_from = sql_query[:from_index].strip()
+            after_asterisk = sql_query[from_index + len('FROM *'):].strip()
+
+            table_names = ['sensor_node_1_tb', 'sensor_node_2_tb', 'sensor_node_3_tb', 'sensor_node_4_tb']
+
+            modified_query = ''
+            for table_name in table_names:
+                modified_query += before_from + f", '{table_name}' AS src_table FROM `{table_name}` {after_asterisk} UNION "
+
+            sql_query = modified_query.rstrip(' UNION ')
+
+
         sql = SQL(self.isGraphSql, self.isGoodCondition, self.isGoodConditionDate, self.isGoodOrBadConditionDate)
 
         self.isGoodOrBadConditionDate = False
