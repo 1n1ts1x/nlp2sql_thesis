@@ -6,25 +6,24 @@
     color: 0, 0, 0, 1
 
 <Button>:
-    size_hint: (1, 1)
+    size_hint: (0.8, 1)
     color: 1, 1, 1, 1
+    font_size: 20
 
 <KVBL>:
     input_query: input_query
-
+    
     BoxLayout: 
         orientation: 'vertical'
-        padding: 50
+        padding: 30
 
         BoxLayout:
             orientation: 'vertical'
 
-            Label:
-                text: 'English to SQL Translator'
-
             TextInput:
                 id: input_query
                 hint_text: 'Enter text'
+                size_hint: (1, 4)  
 
             BoxLayout:
                 orientation: 'horizontal'
@@ -44,9 +43,6 @@
         BoxLayout:
             orientation: 'vertical'
 
-            # Label:
-            #     text: 'Generated SQL query:'
-
             TextInput:
                 id: output_query_txtinput
                 background_color: (0, 0, 0, 1)
@@ -56,12 +52,16 @@
 
             BoxLayout:
                 orientation: 'horizontal'
-        
-    # ScrollView:
-    #     size_hint: (1, 1)
-    #     do_scroll_x: False
+ 
 
-        BoxLayout:
+    BoxLayout: 
+        orientation: 'vertical'
+        padding: 30, 30, 30, 60
+
+        BoxLayout: 
             orientation: 'vertical'
+            pos_hint: {'right': 1, 'center_y': 0.5}
+            
             id: data_table_box
-            height: dp(80)
+
+            
