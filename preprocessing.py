@@ -1377,6 +1377,9 @@ class CleanText:
         print("lemmatized tokens")
         print(lemmatized_tokens)
 
+        if lemmatized_tokens[len(lemmatized_tokens) - 1] == "is":
+            lemmatized_tokens.pop()
+
         return lemmatized_tokens
 
 

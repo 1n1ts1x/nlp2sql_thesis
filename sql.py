@@ -31,8 +31,8 @@ class SQL:
 
                 try:
                     for row in records:
-                        dates.append(row[0])
-                        y.append(row[1])
+                        dates.append(row[1])
+                        y.append(row[2])
 
                     plt.plot_date(dates, y, 'g')
                     plt.xticks(rotation=70)

@@ -5,27 +5,27 @@ class Query:
     def prepare_query(self, where='', table='', flag=False, flag_good_bad=False):
         if flag:
             return f'''
-                SELECT Date_n_Time, 'Temperature' AS param, Temperature AS pvalue
+                SELECT id, Date_n_Time, 'Temperature' AS param, Temperature AS pvalue
                 FROM {table}
                 WHERE Temperature {"<" if flag_good_bad else ">="} (SELECT opt_temp_from FROM ideal_parameters)
                     OR Temperature {">" if flag_good_bad else "<="} (SELECT opt_temp_to FROM ideal_parameters)
                 UNION
-                SELECT Date_n_Time, 'Humidity' AS param, Humidity AS pvalue
+                SELECT id, Date_n_Time, 'Humidity' AS param, Humidity AS pvalue
                 FROM {table}
                 WHERE Humidity {"<" if flag_good_bad else ">="} (SELECT opt_humid_from FROM ideal_parameters)
                     OR Humidity {">" if flag_good_bad else "<="} (SELECT opt_humid_to FROM ideal_parameters)
                 UNION
-                SELECT Date_n_Time, 'Soil_Moisture' AS param, Soil_Moisture AS pvalue
+                SELECT id, Date_n_Time, 'Soil_Moisture' AS param, Soil_Moisture AS pvalue
                 FROM {table}
                 WHERE Soil_Moisture {"<" if flag_good_bad else ">="} (SELECT opt_soil_from FROM ideal_parameters)
                     OR Soil_Moisture {">" if flag_good_bad else "<="} (SELECT opt_soil_to FROM ideal_parameters)
                 UNION
-                SELECT Date_n_Time, 'Air_Quality' AS param, Air_Quality AS pvalue
+                SELECT id, Date_n_Time, 'Air_Quality' AS param, Air_Quality AS pvalue
                 FROM {table}
                 WHERE Air_Quality {"<" if flag_good_bad else ">="} (SELECT opt_air_from FROM ideal_parameters)
                     OR Air_Quality {">" if flag_good_bad else "<="} (SELECT opt_air_to FROM ideal_parameters)
                 UNION
-                SELECT Date_n_Time, 'Light_Intensity' AS param, Light_Intensity AS pvalue
+                SELECT id, Date_n_Time, 'Light_Intensity' AS param, Light_Intensity AS pvalue
                 FROM {table}
                 WHERE Light_Intensity {"<" if flag_good_bad else ">="} (SELECT opt_light_from FROM ideal_parameters)
                     OR Light_Intensity {">" if flag_good_bad else "<="} (SELECT opt_light_to FROM ideal_parameters);

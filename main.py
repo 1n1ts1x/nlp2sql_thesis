@@ -252,7 +252,45 @@ class KVBL(BoxLayout):
 
         converted_string = ' '.join(converted_words)
         return converted_string
+
+    def check_and_append_fields(self, query):
+            pattern = r"SELECT\s+\*\s+FROM"
+            isAsterisk = re.search(pattern, query, re.IGNORECASE)
+            if isAsterisk:
+                return query
+            else:
+                select_index = query.index("SELECT")
+                from_index = query.index("FROM")
+
+                if self.isGraphSql:
+                    queryGraph = re.sub(r"(SELECT)", r"\1 " + "id,", query)
+                    return queryGraph
+                elif not self.isOptimal:
+                    select_pattern = r"SELECT(.+?)FROM"
+                    fields = re.search(select_pattern, query, re.IGNORECASE)
+
+                    if fields:
+                        fields = fields.group(1).strip()
+                        fields_list = [field.strip() for field in fields.split(",")]
+                        temp_str = fields_list[0]
+
+                        if "id" not in temp_str:
+                            fields_list.insert(0, 'id')
+
+                        if "Date_n_Time" not in temp_str:   
+                            fields_list.insert(1, 'Date_n_Time')
+
+                        fields = ", ".join(fields_list)
+                        query = re.sub(select_pattern, f'SELECT {fields} FROM', query, flags=re.IGNORECASE)
+                        
+                        return query
+
+                queryOptimal = query[:select_index + len("SELECT")] + " id, Date_n_Time," + query[select_index + len("SELECT"):from_index] + query[from_index:]
+
+                return queryOptimal
         
+        
+
     def on_enter(self):
         input_query_txt = ' '.join(self.input_query.text.split())
         self.ids.output_query_txtinput.text = ''
@@ -461,9 +499,12 @@ class KVBL(BoxLayout):
                 table_name = sql_query_list[sql_query_list.index('FROM') + 1:]
                 sql_query = qq.prepare_query('', ' '.join(table_name), False)
 
+        if not self.isGoodConditionDate and not self.isGoodCondition and not self.isGoodOrBadConditionDate:
+            sql_query = self.check_and_append_fields(sql_query)
 
         sql_query_word = sql_query
 
+    
 
         dict_chars_replace = {'open parenthesis': '(', 'close_parenthesis': ')', ' comma': ',', 'greater than or equal': '>=', 'greater than': '>', 'less than or equal': '<=',
         'less than': '<', 'not equal': '!=', 'equal': '=', 'hyphen': '-', 'apostrophe': "'", 'dummy': '*'}
