@@ -464,25 +464,25 @@ class Classifier:
             if not check:
                 humidity_or_soil = 0
                 
-                t.say('Please choose one between humidity level or soil moisture')
-                t.runAndWait()
+                # t.say('Please choose one between humidity level or soil moisture')
+                # t.runAndWait()
 
                 r = sr.Recognizer()
                 with sr.Microphone() as source: 
 
-                    t.say('Say humidity, to obtain the humidity level or say soil for soil moisture')
-                    t.runAndWait()
-                    t.stop()
+                    # t.say('Say humidity, to obtain the humidity level or say soil for soil moisture')
+                    # t.runAndWait()
+                    # t.stop()
 
                     audio = r.listen(source)
 
                     try:
                         humidity_or_soil = r.recognize_google(audio)    
 
-                        t.say('You said')
-                        t.runAndWait()
-                        t.say(humidity_or_soil)
-                        t.runAndWait()
+                        # t.say('You said')
+                        # t.runAndWait()
+                        # t.say(humidity_or_soil)
+                        # t.runAndWait()
                     except:
                         return -2
                 

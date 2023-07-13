@@ -601,25 +601,25 @@ class SQLGenerator:
                 }
             elif param == 'percent':
 
-                self.t.say('Please choose one between humidity level or soil moisture')
-                self.t.runAndWait()
+                # self.t.say('Please choose one between humidity level or soil moisture')
+                # self.t.runAndWait()
 
                 r = sr.Recognizer()
                 with sr.Microphone() as source: 
 
-                    self.t.say('Say humidity, to obtain the humidity level or say soil for soil moisture')
-                    self.t.runAndWait()
-                    self.t.stop()
+                    # self.t.say('Say humidity, to obtain the humidity level or say soil for soil moisture')
+                    # self.t.runAndWait()
+                    # self.t.stop()
 
                     audio = r.listen(source)
 
                     try:
                         humidity_or_soil = r.recognize_google(audio)    
 
-                        self.t.say('You said')
-                        self.t.runAndWait()
-                        self.t.say(humidity_or_soil)
-                        self.t.runAndWait()
+                        # self.t.say('You said')
+                        # self.t.runAndWait()
+                        # self.t.say(humidity_or_soil)
+                        # self.t.runAndWait()
                     except:
                         temp2 = -1
                 
