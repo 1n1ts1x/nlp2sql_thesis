@@ -8,9 +8,22 @@ from datetime import date, datetime, timedelta
 
 
 class SQLGenerator:
-    def __init__(self, q='', t='', q2='', isOptimum=False, isGraph=False):
+    # def __init__(self, q='', t='', q2='', isOptimum=False, isGraph=False):
+    #     self.q = q
+    #     self.t = t
+    #     self.query = ''
+    #     self.err = ''
+    #     self.q2 = q2
+    #     self.param_err = 0
+    #     self.query_flag = 0
+    #     self.temp2 = 0
+    #     self.sql_schema_tbl = [] 
+    #     self.list_sql_multi = []
+    #     self.isOptimum = isOptimum
+    #     self.isGraph = isGraph
+
+    def __init__(self, q='', q2='', isOptimum=False, isGraph=False):
         self.q = q
-        self.t = t
         self.query = ''
         self.err = ''
         self.q2 = q2
@@ -85,7 +98,7 @@ class SQLGenerator:
 
     def add_multiple_conditions(self, list_sql_syntax, param, sql_schema, t, param_err):
         self.query_flag = 0
-        self.t = t
+        # self.t = t
         today = datetime.today()
         yesterday = today - timedelta(days = 1)
 
@@ -131,7 +144,8 @@ class SQLGenerator:
                             j += 1
 
                         val_cpy = sub_sql_list.copy()
-                        cls3 = Classifier(sub_sql_list, 1, param, sql_schema, self.t, param_err)
+                        # cls3 = Classifier(sub_sql_list, 1, param, sql_schema, self.t, param_err)
+                        cls3 = Classifier(sub_sql_list, 1, param, sql_schema, param_err)
 
                         sql_check = ''
                         sql_check = cls3.ngram_check(self.isGraph)
@@ -432,7 +446,8 @@ class SQLGenerator:
         sql_schema = [['temperature', 'humidity', 'air', 'soil', 'light', 'date', 'opt_light', 'opt_air'], ['']]
 
         temp = 0
-        cls = Classifier(list_tokens, 0, 0, sql_schema, self.t)
+        # cls = Classifier(list_tokens, 0, 0, sql_schema, self.t)
+        cls = Classifier(list_tokens, 0, 0, sql_schema)
         temp = cls.ngram_check(self.isGraph)
 
         num_err = re.sub('\d', 'x', ' '.join(list_tokens))
@@ -582,7 +597,8 @@ class SQLGenerator:
 
         '''map list items with user-defined schema'''    
         temp2 = 0
-        cls2 = Classifier(list_temp_tokens, 1, param, sql_schema, self.t)
+        # cls2 = Classifier(list_temp_tokens, 1, param, sql_schema, self.t)
+        cls2 = Classifier(list_temp_tokens, 1, param, sql_schema)
         temp2 = cls2.ngram_check(self.isGraph)
         
         sql_flag = 0
@@ -1212,7 +1228,8 @@ class SQLGenerator:
             sql_query = ' '
 
             if self.q2: 
-                list_sql_syntax_multi = self.add_multiple_conditions(list_sql_syntax, param, sql_schema, self.t, self.param_err)
+                # list_sql_syntax_multi = self.add_multiple_conditions(list_sql_syntax, param, sql_schema, self.t, self.param_err)
+                list_sql_syntax_multi = self.add_multiple_conditions(list_sql_syntax, param, sql_schema, self.param_err)
 
                 try:
                     i = 0

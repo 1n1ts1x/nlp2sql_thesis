@@ -5,12 +5,34 @@ import speech_recognition as sr
 class Classifier:
     # check = 0
     
-    def __init__(self, list_toks='', f='', p='', schem='', t='', param_err=0):
+    # def __init__(self, list_toks='', f='', p='', schem='', t='', param_err=0):
+    #     self.list_toks = list_toks
+    #     self.f = f
+    #     self.p = p
+    #     self.schem = schem
+    #     self.t = t
+    #     self.param_err = param_err
+    #     self.save_month = ''
+    #     self.month_list = {
+    #         'january': '1', 
+    #         'february': '2', 
+    #         'march': '3', 
+    #         'april': '4', 
+    #         'may': '5', 
+    #         'june': '6', 
+    #         'july': '7', 
+    #         'august': '8', 
+    #         'september': '9', 
+    #         'october': '10', 
+    #         'november': '11', 
+    #         'december': '12'
+    #         }
+
+    def __init__(self, list_toks='', f='', p='', schem='', param_err=0):
         self.list_toks = list_toks
         self.f = f
         self.p = p
         self.schem = schem
-        self.t = t
         self.param_err = param_err
         self.save_month = ''
         self.month_list = {
@@ -27,7 +49,7 @@ class Classifier:
             'november': '11', 
             'december': '12'
             }
-
+        
     def map_bigram_sql_condition(self, list_toks, p, t, schem_tbl):
         for key in self.month_list:
             i = 0
@@ -1572,7 +1594,8 @@ class Classifier:
             
             return 0
         try:
-            return self.map_bigram_sql_condition(self.list_toks, self.p, self.t, self.schem[1][0])
+            # return self.map_bigram_sql_condition(self.list_toks, self.p, self.t, self.schem[1][0])
+            return self.map_bigram_sql_condition(self.list_toks, self.p, self.schem[1][0])
         except:
             return -3
 

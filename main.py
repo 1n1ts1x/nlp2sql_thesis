@@ -28,8 +28,8 @@ import datetime
 
 Window.clearcolor = (.9, .9, .9, .9) 
 
-tts = pyttsx3.init()
-tts.setProperty('rate', 150)
+# tts = pyttsx3.init()
+# tts.setProperty('rate', 150)
 
 class KVBL(BoxLayout):    
     input_query = ObjectProperty(None)
@@ -411,7 +411,8 @@ class KVBL(BoxLayout):
         try:
             t.parse_tokens()
         except:
-            sql_gen = SQLGenerator(prep.clean_text(), tts, prep.lemmatized_tokens2, self.isOptimal, self.isGraph)
+            # sql_gen = SQLGenerator(prep.clean_text(), tts, prep.lemmatized_tokens2, self.isOptimal, self.isGraph)
+            sql_gen = SQLGenerator(prep.clean_text(), prep.lemmatized_tokens2, self.isOptimal, self.isGraph)
             sql_query = sql_gen.generate_sql_statement()
 
             i = 0
@@ -423,7 +424,8 @@ class KVBL(BoxLayout):
                     del prep.save_for_later[i]
                     
                     pi = CleanText(' '.join(prep.save_for_later), prep.save_for_later, False)
-                    sql_geni = SQLGenerator(pi.clean_text(), tts, pi.lemmatized_tokens2)
+                    # sql_geni = SQLGenerator(pi.clean_text(), tts, pi.lemmatized_tokens2)
+                    sql_geni = SQLGenerator(pi.clean_text(), pi.lemmatized_tokens2)
                     sql_query = sql_geni.generate_sql_statement()
                 
                 i += 1
