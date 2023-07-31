@@ -49,6 +49,7 @@ class KVBL(BoxLayout):
         self.tempQuery = ''
         field_value = FieldValue(_key=[], _value=[[], []])
         self.create_data_table(field_value)
+        
     @mainthread 
     def update(self, q, f, *largs):
         if not f:
@@ -73,8 +74,8 @@ class KVBL(BoxLayout):
             self.ids.output_query_txtinput.foreground_color = 1, 1, 1, 1
             self.ids.output_query_txtinput.text = q
 
-    def back_to_main(self, q, f):
-        self.update(q, f)
+    # def back_to_main(self, q, f):
+    #     self.update(q, f)
             
     def thread_run_tts(self, sql_query='', flag=False):
         if 'SELECT' in sql_query or 'SELECT' in self.tempQuery:
@@ -103,25 +104,29 @@ class KVBL(BoxLayout):
         with sr.Microphone() as self.source: 
 
             Clock.schedule_once(partial(self.update, 'What is your query?', 1), 0)
-            tts.say('What is your query?')
-            tts.runAndWait()
-            tts.stop()
+            # self.update('What is your query?', 1)
+            # tts.say('What is your query?')
+            # tts.runAndWait()
+            # tts.stop()
 
             try:
                 audio = r.listen(self.source)
                 query = r.recognize_google(audio)    
 
                 Clock.schedule_once(partial(self.update, 'You said', 1), 0)
-                tts.say('You said')
-                tts.runAndWait()
+                # self.update('You said', 1)
+                # tts.say('You said')
+                # tts.runAndWait()
                 Clock.schedule_once(partial(self.update, query, 1), 0)
-                tts.say(query)
-                tts.runAndWait()
+                # self.update(query, 1)
+                # tts.say(query)
+                # tts.runAndWait()
                 self.sqlquery = query
             except:                
-                tts.say('Failed to generate SQL statement voice is unrecognizable')
+                # tts.say('Failed to generate SQL statement voice is unrecognizable')
                 Clock.schedule_once(partial(self.update, 'Failed to generate SQL statement voice is unrecognizable', 0), 0)
-                tts.runAndWait()
+                # self.update('Failed to generate SQL statement voice is unrecognizable', 0)
+                # tts.runAndWait()
 
     def get_x_days(self, input_query_txt, flag, day_str=""):
         today = datetime.datetime.now()
@@ -313,8 +318,11 @@ class KVBL(BoxLayout):
         input_query_txt = re.sub(r'\bweeks\b', 'week', input_query_txt)
         input_query_txt = re.sub(r'\bmonths\b', 'month', input_query_txt)
         input_query_txt = re.sub(r'\byears\b', 'year', input_query_txt)
-        
-        if "condition" in input_query_txt and ("good" in input_query_txt or "optimal" in input_query_txt or "ok" in input_query_txt or "ideal" in input_query_txt or "excellent" in input_query_txt or "best" in input_query_txt or "standard" in input_query_txt):
+
+        if "tomato" not in input_query_txt and "grape" not in input_query_txt and "corn" not in input_query_txt and "wheat" not in input_query_txt:
+            input_query_txt = input_query_txt + " of all table FROM all table"
+
+        if "condition" in input_query_txt and ("grape" in input_query_txt or "optimal" in input_query_txt or "ok" in input_query_txt or "ideal" in input_query_txt or "excellent" in input_query_txt or "best" in input_query_txt or "standard" in input_query_txt):
             self.isGoodCondition = True
         else:
             self.isGoodCondition = False
@@ -475,7 +483,9 @@ class KVBL(BoxLayout):
             sql_query = ' '.join(sql_query_list)
 
         qq = Query()
+
         print(sql_query_list, "sql_query_list")
+
 
         if self.isGoodConditionDate: 
             try:
@@ -506,8 +516,6 @@ class KVBL(BoxLayout):
 
         sql_query_word = sql_query
 
-    
-
         dict_chars_replace = {'open parenthesis': '(', 'close_parenthesis': ')', ' comma': ',', 'greater than or equal': '>=', 'greater than': '>', 'less than or equal': '<=',
         'less than': '<', 'not equal': '!=', 'equal': '=', 'hyphen': '-', 'apostrophe': "'", 'dummy': '*'}
 
@@ -532,6 +540,7 @@ class KVBL(BoxLayout):
                 modified_query += before_from + f", '{table_name}' AS src_table FROM `{table_name}` {after_asterisk} UNION "
 
             sql_query = modified_query.rstrip(' UNION ')
+        
 
 
         sql = SQL(self.isGraphSql, self.isGoodCondition, self.isGoodConditionDate, self.isGoodOrBadConditionDate)
@@ -593,36 +602,157 @@ class KVBL(BoxLayout):
 
         input_query_txt = self.t2d.convert(self.sqlquery)
 
+        input_query_txt = self.replace_worded_numbers(input_query_txt)
+
+        input_query_txt = input_query_txt.lower()
+
+        input_query_txt = re.sub(r'\btomatoes\b', 'tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bgrapes\b', 'grape', input_query_txt)
+        input_query_txt = re.sub(r'\bcorns\b', 'corn', input_query_txt)
+        input_query_txt = re.sub(r'\bwheats\b', 'wheat', input_query_txt)
+
+        input_query_txt = re.sub(r'\bshow tomato\b', 'show all from tomato', input_query_txt)
+        input_query_txt = re.sub(r'\bshow grape\b', 'show all from grape', input_query_txt)
+        input_query_txt = re.sub(r'\bshow corn\b', 'show all from corn', input_query_txt)
+        input_query_txt = re.sub(r'\bshow wheat\b', 'show all from wheat', input_query_txt)
+
+        input_query_txt = re.sub(r'\bdays\b', 'day', input_query_txt)
+        input_query_txt = re.sub(r'\bweeks\b', 'week', input_query_txt)
+        input_query_txt = re.sub(r'\bmonths\b', 'month', input_query_txt)
+        input_query_txt = re.sub(r'\byears\b', 'year', input_query_txt)
+
+        if "tomato" not in input_query_txt and "grape" not in input_query_txt and "corn" not in input_query_txt and "wheat" not in input_query_txt:
+            input_query_txt = input_query_txt + " of all table FROM all table"
+
+        if "condition" in input_query_txt and ("grape" in input_query_txt or "optimal" in input_query_txt or "ok" in input_query_txt or "ideal" in input_query_txt or "excellent" in input_query_txt or "best" in input_query_txt or "standard" in input_query_txt):
+            self.isGoodCondition = True
+        else:
+            self.isGoodCondition = False
+        
+        if ("what is the date" in input_query_txt or "when" in input_query_txt) and "condition" in input_query_txt and ("good" in input_query_txt or "optimal" in input_query_txt or "ok" in input_query_txt or "ideal" in input_query_txt or "excellent" in input_query_txt or "best" in input_query_txt or "standard" in input_query_txt):
+            input_query_txt = re.sub(r'\bcore\b', 'optimal', input_query_txt)
+            input_query_txt = re.sub(r'\bideal\b', 'optimal', input_query_txt)
+            input_query_txt = re.sub(r'\boptimum\b', 'optimal', input_query_txt)
+            input_query_txt = re.sub(r'\bbest\b', 'optimal', input_query_txt)
+            input_query_txt = re.sub(r'\bbelow optimal\b', 'not within optimal', input_query_txt)
+            input_query_txt = re.sub(r'\bbelow the optimal\b', 'not within optimal', input_query_txt)
+            input_query_txt = re.sub(r'\bnot optimal\b', 'not within optimal', input_query_txt)
+            input_query_txt = re.sub(r'\bnot in optimal\b', 'not within optimal', input_query_txt)
+            input_query_txt = re.sub(r'\bbelow optimal\b', 'not within optimal', input_query_txt)
+            input_query_txt = re.sub(r'\bin optimal\b', 'within optimal', input_query_txt)
+            input_query_txt = re.sub(r'\bwhat is the date\b', 'when', input_query_txt)
+            input_query_txt = re.sub(r'\bwhat are the dates\b', 'when', input_query_txt)
+            input_query_txt = re.sub(r'\bwhat date\b', 'when', input_query_txt)
+            input_query_txt = re.sub(r'\bwhat dates\b', 'within optimal', input_query_txt)
+
+            if "not within optimal" in input_query_txt:
+                self.isGoodOrBadConditionDate = True
+            elif "within optimal" in input_query_txt:
+                self.isGoodOrBadConditionDate = False
+
+            self.isGoodConditionDate = True
+        else:
+            self.isGoodConditionDate = False
+
+        if "average" in input_query_txt:
+            self.isAverage = True
+            input_query_txt = re.sub(r'\baverage\b', '', input_query_txt)
+        else:
+            self.isAverage = False
+
+        input_query_txt = self.convert_string_to_ago_format(input_query_txt)
+
+        if "last day" in input_query_txt:
+            input_query_txt = self.get_x_days(input_query_txt, False, "last day")
+        elif "previous day" in input_query_txt:
+            input_query_txt = self.get_x_days(input_query_txt, False, "previous day")
+        elif "past day" in input_query_txt:
+            input_query_txt = self.get_x_days(input_query_txt, False, "past day")
+        elif "day ago" in input_query_txt:
+            input_query_txt = self.get_x_days(input_query_txt, True,)
+
+        if "last week" in input_query_txt:
+            input_query_txt = self.get_x_weeks(input_query_txt, False, "last week", datetime.date(int(datetime.date.today().year), int(datetime.date.today().month), int(datetime.date.today().day)))
+        elif "previous week" in input_query_txt:
+            input_query_txt = self.get_x_weeks(input_query_txt, False, "previous week", datetime.date(int(datetime.date.today().year), int(datetime.date.today().month), int(datetime.date.today().day)))
+        elif "past week" in input_query_txt:
+            input_query_txt = self.get_x_weeks(input_query_txt, False, "past week", datetime.date(int(datetime.date.today().year), int(datetime.date.today().month), int(datetime.date.today().day)))
+        elif "week ago" in input_query_txt:
+            input_query_txt = self.get_x_weeks(input_query_txt, True, "", datetime.date(int(datetime.date.today().year), int(datetime.date.today().month), int(datetime.date.today().day)))
+
+        if "last month" in input_query_txt:
+            input_query_txt = self.get_x_months(input_query_txt, False, "last month")
+        elif "previous month" in input_query_txt:
+            input_query_txt = self.get_x_months(input_query_txt, False, "previous month")
+        elif "past month" in input_query_txt:
+            input_query_txt = self.get_x_months(input_query_txt, False, "past month")
+        elif "month ago" in input_query_txt:
+            input_query_txt = self.get_x_months(input_query_txt, True)
+
+        if "last year" in input_query_txt:
+            input_query_txt = self.get_x_years(input_query_txt, False, "last year")
+        elif "previous year" in input_query_txt:
+            input_query_txt = self.get_x_years(input_query_txt, False, "previous year")
+        elif "past year" in input_query_txt:
+            input_query_txt = self.get_x_years(input_query_txt, False, "past year")
+        elif "year ago" in input_query_txt:
+            input_query_txt = self.get_x_years(input_query_txt, True)
+        
+        if "graph" in input_query_txt or "plot" in input_query_txt or "trace" in input_query_txt :
+            self.isGraph = True
+            self.isGraphSql = True
+        else:
+            self.isGraph = False
+
         repstr = ReplaceSubstring(input_query_txt)
         input_query_txt = repstr.replace_sub_str()
 
+        if "optimum" in input_query_txt:
+            self.isOptimal = True
+        else:
+            self.isOptimal = False
+
         print('INPUT: input_query_txt')
         print(input_query_txt)
-        
+
         prep = CleanText(input_query_txt, self.save_for_later, True)
-        tx = TextAnalysis(prep.clean_text())
+        t = TextAnalysis(prep.clean_text())
 
         try:
-            tx.parse_tokens()
+            t.parse_tokens()
         except:
-            sql_gen = SQLGenerator(prep.clean_text(), tts, prep.lemmatized_tokens2)
+            # sql_gen = SQLGenerator(prep.clean_text(), tts, prep.lemmatized_tokens2, self.isOptimal, self.isGraph)
+            sql_gen = SQLGenerator(prep.clean_text(), prep.lemmatized_tokens2, self.isOptimal, self.isGraph)
             sql_query = sql_gen.generate_sql_statement()
- 
-            sql_geni = ''
 
             i = 0
 
             while i < len(prep.save_for_later) and 'SELECT' not in sql_query and sql_query != '-4' and sql_query != '-5':
                 if 'where' == prep.save_for_later[i] and 'is' == prep.save_for_later[i + 1]:
-
+   
                     del prep.save_for_later[i]
                     del prep.save_for_later[i]
                     
                     pi = CleanText(' '.join(prep.save_for_later), prep.save_for_later, False)
-                    sql_geni = SQLGenerator(pi.clean_text(), tts, pi.lemmatized_tokens2)
+                    # sql_geni = SQLGenerator(pi.clean_text(), tts, pi.lemmatized_tokens2)
+                    sql_geni = SQLGenerator(pi.clean_text(), pi.lemmatized_tokens2)
                     sql_query = sql_geni.generate_sql_statement()
                 
                 i += 1
+        
+        sql_query = re.sub(r'\bHumidity Date_n_Time\b', 'Date_n_Time', sql_query)
+        sql_query = re.sub(r'\bTemperature Date_n_Time\b', 'Date_n_Time', sql_query)
+        sql_query = re.sub(r'\bSoil_Moisture Date_n_Time\b', 'Date_n_Time', sql_query)
+        sql_query = re.sub(r'\bLight_Intensity Date_n_Time\b', 'Date_n_Time', sql_query)
+        sql_query = re.sub(r'\bAir_Quality Date_n_Time\b', 'Date_n_Time', sql_query)
+        sql_query = re.sub(r'\bDate_n_Time than\b', 'Date_n_Time >=', sql_query)
+
+        sql_query = re.sub(r'\bDate_n_Time equal\b', 'CAST(Date_n_Time AS date) =', sql_query)
+        sql_query = re.sub(r'\bDate_n_Time not equal\b', 'CAST(Date_n_Time AS date) !=', sql_query)
+        sql_query = re.sub(r'\bDate_n_Time greater than or equal\b', 'CAST(Date_n_Time AS date) >=', sql_query)
+        sql_query = re.sub(r'\bDate_n_Time greater than\b', 'CAST(Date_n_Time AS date) >', sql_query)
+        sql_query = re.sub(r'\bDate_n_Time less than or equal\b', 'CAST(Date_n_Time AS date) <=', sql_query)
+        sql_query = re.sub(r'\bDate_n_Time less than\b', 'CAST(Date_n_Time AS date) <', sql_query)
 
         sql_query_list = list(sql_query.split(' '))
 
@@ -633,10 +763,62 @@ class KVBL(BoxLayout):
                 sql_query = ' '.join(sql_query_list)
         except:
             None
+                
+        if self.isAverage:
+            chunk = sql_query_list[len(sql_query_list) - sql_query_list[::-1].index('SELECT') : sql_query_list.index('FROM')]
+            try:
+                del chunk[chunk.index('comma')]
+            except:
+                pass
+            i = 0
+
+            while i < len(sql_query_list):
+                j = 0
+
+                while j < len(chunk):
+                    if chunk[j] == sql_query_list[i]:
+                        sql_query_list[i] = f"AVG({chunk[j]})"
+
+                    j += 1
+                i += 1
+            
+            sql_query = ' '.join(sql_query_list)
+
+        qq = Query()
+
+        print(sql_query_list, "sql_query_list")
+
+
+        if self.isGoodConditionDate: 
+            try:
+                where_clause = sql_query_list[sql_query_list.index('WHERE') + 1:]
+                table_name = sql_query_list[len(sql_query_list) - sql_query_list[::-1].index('FROM') : sql_query_list.index('WHERE')]
+
+                if self.isGoodOrBadConditionDate:
+                    sql_query = qq.prepare_query(' '.join(where_clause), ' '.join(table_name), True, True)
+                else:
+                    sql_query = qq.prepare_query(' '.join(where_clause), ' '.join(table_name), True, False)
+            except:
+                table_name = sql_query_list[sql_query_list.index('FROM') + 1:]
+                if self.isGoodOrBadConditionDate:
+                    sql_query = qq.prepare_query('', ' '.join(table_name), True, True)
+                else:
+                    sql_query = qq.prepare_query('', ' '.join(table_name), True, False)
+        elif self.isGoodCondition: 
+            try:
+                where_clause = sql_query_list[sql_query_list.index('WHERE') + 1:]
+                table_name = sql_query_list[len(sql_query_list) - sql_query_list[::-1].index('FROM') : sql_query_list.index('WHERE')]
+                sql_query = qq.prepare_query(' '.join(where_clause), ' '.join(table_name), False)
+            except:
+                table_name = sql_query_list[sql_query_list.index('FROM') + 1:]
+                sql_query = qq.prepare_query('', ' '.join(table_name), False)
+
+        if not self.isGoodConditionDate and not self.isGoodCondition and not self.isGoodOrBadConditionDate:
+            sql_query = self.check_and_append_fields(sql_query)
 
         sql_query_word = sql_query
 
-        dict_chars_replace = {' comma': ',', 'greater than or equal': '>=', 'greater than': '>', 'less than or equal': '<=',
+        dict_chars_replace = {'open parenthesis': '(', 'close_parenthesis': ')', ' comma': ',', 'greater than or equal': '>=', 'greater than': '>', 'less than or equal': '<=',
         'less than': '<', 'not equal': '!=', 'equal': '=', 'hyphen': '-', 'apostrophe': "'", 'dummy': '*'}
 
         try:
@@ -644,11 +826,68 @@ class KVBL(BoxLayout):
                 sql_query = sql_query.replace(key, value)
         except:
             pass
+        
+        print(sql_query, "sql_query")
 
-        try:
-            Clock.schedule_once(partial(self.update, sql_query, 0), 0)
-        finally:
-            pass
+        if "FROM *" in sql_query:
+            from_index = sql_query.index('FROM *')
+
+            before_from = sql_query[:from_index].strip()
+            after_asterisk = sql_query[from_index + len('FROM *'):].strip()
+
+            table_names = ['sensor_node_1_tb', 'sensor_node_2_tb', 'sensor_node_3_tb', 'sensor_node_4_tb']
+
+            modified_query = ''
+            for table_name in table_names:
+                modified_query += before_from + f", '{table_name}' AS src_table FROM `{table_name}` {after_asterisk} UNION "
+
+            sql_query = modified_query.rstrip(' UNION ')
+        
+
+
+        sql = SQL(self.isGraphSql, self.isGoodCondition, self.isGoodConditionDate, self.isGoodOrBadConditionDate)
+
+        self.isGoodOrBadConditionDate = False
+
+        if self.isGoodCondition or self.isGoodConditionDate: 
+            self.tempQuery = sql_query
+            sql_query = sql.execute_query(sql_query)
+        else:
+            sql.execute_query(sql_query)
+
+        self.isGraphSql = False
+        
+        self.create_data_table(sql.pair)
+
+        if 'SELECT' in sql_query:
+            try:
+                self.ids.output_query_txtinput.foreground_color = 0, 1, 0, 1
+                self.ids.output_query_txtinput.text = sql_query
+            except:
+                self.ids.output_query_txtinput.text = sql_query
+        elif 'SELECT' in self.tempQuery:
+            try:
+                self.ids.output_query_txtinput.foreground_color = 0, 1, 0, 1
+                self.ids.output_query_txtinput.text = sql_query + f"\n{self.tempQuery}"
+            except:
+                self.ids.output_query_txtinput.text = sql_query
+        elif sql_query == '-4':
+            sql_query = 'Failed to generate SQL statement date is invalid'
+            self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
+            self.ids.output_query_txtinput.text = 'Failed to generate SQL statement date is invalid'
+        elif sql_query == '-5':
+            sql_query = 'Sorry I am having some trouble understanding your query please try again'
+            self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
+            self.ids.output_query_txtinput.text = 'Sorry I am having some trouble understanding your query please try again'   
+        else:
+            self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
+            self.ids.output_query_txtinput.text = sql_query
+            
+        # try:
+        #     # self.update(sql_query, 0)
+        #     Clock.schedule_once(partial(self.update, sql_query, 0), 0)
+        # finally:
+        #     pass
 
         try:
             sql_query_word = sql_query_word.replace('dummy', '*')
@@ -658,8 +897,8 @@ class KVBL(BoxLayout):
         # threading.Thread(target=self.thread_run_tts, args=(sql_query_word,), daemon=True).start()
 
     def create_data_table(self, pair=[]):
-        data = [[''],['']]
-        headers = ['']  
+        data = [[''], ['']]
+        headers = ['']
 
         isData = False
 
@@ -671,34 +910,43 @@ class KVBL(BoxLayout):
         except:
             pass
 
-        print(pair)
-
-
         if len(headers) == 1:
             headers = [headers[0], '']
             for sublist in data:
                 sublist.append('')
-            
 
-        rows = [[str(value) for value in row] for row in data]  
+        font_size = 12 # headers
+        font_size2 = 10 # values
+
+        column_width = dp(30) # column gap
+
+        markup_headers = [
+            (f"[size={font_size}][b]{header}[/b][/size]", column_width)
+            for header in headers
+        ]
+
+        rows = [
+            [f"[size={font_size2}]{str(value)}[/size]" for value in row]
+            for row in data
+        ]
 
         table = MDDataTable(
-            size_hint =  (1, 0.9),
-            column_data = [(header, dp(85)) for header in headers], 
-            row_data = rows,
-            rows_num = len(data),
-            use_pagination = True if isData else False,
-            check = False,
+            size_hint=(1, 0.9),
+            column_data=markup_headers,
+            row_data=rows,
+            rows_num=len(data),
+            use_pagination=True if isData else False,
+            check=False,
         )
 
-        self.ids.data_table_box.clear_widgets()  
-        self.ids.data_table_box.add_widget(table)  
+        self.ids.data_table_box.clear_widgets()
+        self.ids.data_table_box.add_widget(table)
 
 
 class MainApp(MDApp):    
     def build(self):
         # Window.size = (1000, 900) 
-        Window.size = (800, 480) 
+        Window.size = (700, 380) 
         self.center_window() 
         return KVBL()
 

@@ -16,9 +16,9 @@ class SQL:
         self.pair = []
 
     def execute_query(self, query):
-
+        con = mysql.connector.connect(host='localhost', database='plant', username='root', password='')
+        
         try:
-            con = mysql.connector.connect(host='localhost', database='plant', username='root', password='')
             cur = con.cursor()
             cur.execute(query)
             column_names = [desc[0] for desc in cur.description]

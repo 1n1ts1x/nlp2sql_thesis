@@ -96,7 +96,8 @@ class SQLGenerator:
 
         return None
 
-    def add_multiple_conditions(self, list_sql_syntax, param, sql_schema, t, param_err):
+    def add_multiple_conditions(self, list_sql_syntax, param, sql_schema, param_err):
+    # def add_multiple_conditions(self, list_sql_syntax, param, sql_schema, t, param_err):
         self.query_flag = 0
         # self.t = t
         today = datetime.today()
@@ -1372,7 +1373,6 @@ class SQLGenerator:
             
             return self.err
                 
-
 
 
 

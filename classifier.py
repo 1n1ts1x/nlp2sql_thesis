@@ -49,8 +49,9 @@ class Classifier:
             'november': '11', 
             'december': '12'
             }
-        
-    def map_bigram_sql_condition(self, list_toks, p, t, schem_tbl):
+
+    def map_bigram_sql_condition(self, list_toks, p, schem_tbl):
+    # def map_bigram_sql_condition(self, list_toks, p, t, schem_tbl):
         for key in self.month_list:
             i = 0
             
@@ -1598,7 +1599,6 @@ class Classifier:
             return self.map_bigram_sql_condition(self.list_toks, self.p, self.schem[1][0])
         except:
             return -3
-
 
 
 
