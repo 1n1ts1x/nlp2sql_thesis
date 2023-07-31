@@ -50,7 +50,7 @@ class KVBL(BoxLayout):
         field_value = FieldValue(_key=[], _value=[[], []])
         self.create_data_table(field_value)
         
-    @mainthread 
+    # @mainthread 
     def update(self, q, f, *largs):
         if not f:
             if 'SELECT' in q:
@@ -74,30 +74,30 @@ class KVBL(BoxLayout):
             self.ids.output_query_txtinput.foreground_color = 1, 1, 1, 1
             self.ids.output_query_txtinput.text = q
 
-    # def back_to_main(self, q, f):
-    #     self.update(q, f)
+    def back_to_main(self, q, f):
+        self.update(q, f)
             
-    def thread_run_tts(self, sql_query='', flag=False):
-        if 'SELECT' in sql_query or 'SELECT' in self.tempQuery:
-            if flag:
-                tts.say(sql_query)
-                tts.runAndWait() 
-                tts.say('Executing the SQL statement')
-                tts.runAndWait()  
-                tts.say(self.tempQuery)
-                tts.runAndWait()
-            else:
-                tts.say('Executing the SQL statement')
-                tts.runAndWait()    
-                tts.say(sql_query)
-                tts.runAndWait()
-        else:
-            if sql_query == '-4':
-                sql_query = 'Failed to generate SQL statement date is invalid'
-            elif sql_query == '-5':
-                sql_query = 'Sorry I am having some trouble understanding your query please try again' 
-            tts.say(sql_query)
-            tts.runAndWait()
+    # def thread_run_tts(self, sql_query='', flag=False):
+    #     if 'SELECT' in sql_query or 'SELECT' in self.tempQuery:
+    #         if flag:
+    #             tts.say(sql_query)
+    #             tts.runAndWait() 
+    #             tts.say('Executing the SQL statement')
+    #             tts.runAndWait()  
+    #             tts.say(self.tempQuery)
+    #             tts.runAndWait()
+    #         else:
+    #             tts.say('Executing the SQL statement')
+    #             tts.runAndWait()    
+    #             tts.say(sql_query)
+    #             tts.runAndWait()
+    #     else:
+    #         if sql_query == '-4':
+    #             sql_query = 'Failed to generate SQL statement date is invalid'
+    #         elif sql_query == '-5':
+    #             sql_query = 'Sorry I am having some trouble understanding your query please try again' 
+    #         tts.say(sql_query)
+    #         tts.runAndWait()
       
     def thread_run_stt(self, query=''):
         r = sr.Recognizer()
@@ -591,12 +591,14 @@ class KVBL(BoxLayout):
         # else:
         #     threading.Thread(target=self.thread_run_tts, args=(sql_query, False), daemon=True).start()
 
+
     def on_enter2(self):
         self.ids.input_query.text = ''
         self.ids.output_query_txtinput.text = ''
 
         query = ''
         t = threading.Thread(target=self.thread_run_stt, args=(query,), daemon=True)
+        # self.thread_run_stt(query)
         t.start()
         t.join()
 
@@ -849,45 +851,45 @@ class KVBL(BoxLayout):
 
         self.isGoodOrBadConditionDate = False
 
-        if self.isGoodCondition or self.isGoodConditionDate: 
-            self.tempQuery = sql_query
-            sql_query = sql.execute_query(sql_query)
-        else:
-            sql.execute_query(sql_query)
+        # if self.isGoodCondition or self.isGoodConditionDate: 
+        #     self.tempQuery = sql_query
+        #     sql_query = sql.execute_query(sql_query)
+        # else:
+        #     sql.execute_query(sql_query)
 
-        self.isGraphSql = False
+        # self.isGraphSql = False
         
-        self.create_data_table(sql.pair)
+        # self.create_data_table(sql.pair)
 
-        if 'SELECT' in sql_query:
-            try:
-                self.ids.output_query_txtinput.foreground_color = 0, 1, 0, 1
-                self.ids.output_query_txtinput.text = sql_query
-            except:
-                self.ids.output_query_txtinput.text = sql_query
-        elif 'SELECT' in self.tempQuery:
-            try:
-                self.ids.output_query_txtinput.foreground_color = 0, 1, 0, 1
-                self.ids.output_query_txtinput.text = sql_query + f"\n{self.tempQuery}"
-            except:
-                self.ids.output_query_txtinput.text = sql_query
-        elif sql_query == '-4':
-            sql_query = 'Failed to generate SQL statement date is invalid'
-            self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
-            self.ids.output_query_txtinput.text = 'Failed to generate SQL statement date is invalid'
-        elif sql_query == '-5':
-            sql_query = 'Sorry I am having some trouble understanding your query please try again'
-            self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
-            self.ids.output_query_txtinput.text = 'Sorry I am having some trouble understanding your query please try again'   
-        else:
-            self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
-            self.ids.output_query_txtinput.text = sql_query
+        # if 'SELECT' in sql_query:
+        #     try:
+        #         self.ids.output_query_txtinput.foreground_color = 0, 1, 0, 1
+        #         self.ids.output_query_txtinput.text = sql_query
+        #     except:
+        #         self.ids.output_query_txtinput.text = sql_query
+        # elif 'SELECT' in self.tempQuery:
+        #     try:
+        #         self.ids.output_query_txtinput.foreground_color = 0, 1, 0, 1
+        #         self.ids.output_query_txtinput.text = sql_query + f"\n{self.tempQuery}"
+        #     except:
+        #         self.ids.output_query_txtinput.text = sql_query
+        # elif sql_query == '-4':
+        #     sql_query = 'Failed to generate SQL statement date is invalid'
+        #     self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
+        #     self.ids.output_query_txtinput.text = 'Failed to generate SQL statement date is invalid'
+        # elif sql_query == '-5':
+        #     sql_query = 'Sorry I am having some trouble understanding your query please try again'
+        #     self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
+        #     self.ids.output_query_txtinput.text = 'Sorry I am having some trouble understanding your query please try again'   
+        # else:
+        #     self.ids.output_query_txtinput.foreground_color = 255, 0, 0, 1
+        #     self.ids.output_query_txtinput.text = sql_query
             
-        # try:
-        #     # self.update(sql_query, 0)
-        #     Clock.schedule_once(partial(self.update, sql_query, 0), 0)
-        # finally:
-        #     pass
+        try:
+            # self.update(sql_query, 0)
+            Clock.schedule_once(partial(self.update, sql_query, 0), 0)
+        finally:
+            pass
 
         try:
             sql_query_word = sql_query_word.replace('dummy', '*')
